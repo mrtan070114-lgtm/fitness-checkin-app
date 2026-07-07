@@ -1,14 +1,11 @@
 import type { Profile } from "@/types/database";
+import { ProfileAvatar } from "@/components/ProfileAvatar";
 
 type AppHeaderProps = {
   profile: Profile;
   title?: string;
   subtitle?: string;
 };
-
-function getAvatarText(username: string) {
-  return username.trim().slice(0, 1).toUpperCase() || "F";
-}
 
 export function AppHeader({ profile, title = "健身打卡", subtitle = "双人监督健身记录" }: AppHeaderProps) {
   return (
@@ -17,9 +14,7 @@ export function AppHeader({ profile, title = "健身打卡", subtitle = "双人�
         <h1>{title}</h1>
         <p>{subtitle}</p>
       </div>
-      <div className="avatar-placeholder" aria-label={`${profile.username} 的头像`}>
-        {getAvatarText(profile.username)}
-      </div>
+      <ProfileAvatar profile={profile} />
     </header>
   );
 }

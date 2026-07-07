@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { CalendarCheck, Dumbbell, Home, UserRound, UsersRound } from "lucide-react";
 
 const items = [
@@ -14,15 +15,30 @@ const items = [
 
 export function BottomNav() {
   const pathname = usePathname();
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
+
+  useEffect(() => {
+    setPendingHref(null);
+  }, [pathname]);
 
   return (
     <nav className="bottom-nav" aria-label="用户底部导航">
       {items.map((item) => {
         const Icon = item.icon;
-        const active = pathname === item.href;
+        const pending = pendingHref === item.href && pathname !== item.href;
+        const active = pathname === item.href || pending;
+        const className = active ? `bottom-nav-item active${pending ? " pending" : ""}` : "bottom-nav-item";
 
         return (
-          <Link className={active ? "bottom-nav-item active" : "bottom-nav-item"} href={item.href} key={item.href}>
+          <Link
+            className={className}
+            href={item.href}
+            key={item.href}
+            prefetch={true}
+            onNavigate={() => {
+              setPendingHref(item.href);
+            }}
+          >
             <Icon size={20} aria-hidden="true" />
             <span>{item.label}</span>
           </Link>

@@ -1,0 +1,24 @@
+{
+  "name": "双人健身打卡",
+  "short_name": "健身打卡",
+  "description": "双人监督健身记录 App",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#eef4ef",
+  "theme_color": "#126b42",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

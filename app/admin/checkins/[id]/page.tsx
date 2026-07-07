@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { deleteCheckin } from "@/app/admin/checkins/actions";
+import { CheckinInteractions } from "@/components/CheckinInteractions";
 import { RecordCard } from "@/components/RecordCard";
 import { SubmitButton } from "@/components/SubmitButton";
 import { requireAdmin } from "@/lib/auth";
+import { fetchRecordInteractions } from "@/lib/interactions";
 import type { Checkin, Profile } from "@/types/database";
 
 type AdminCheckinDetailPageProps = {
@@ -12,7 +14,7 @@ type AdminCheckinDetailPageProps = {
 
 export default async function AdminCheckinDetailPage({ params }: AdminCheckinDetailPageProps) {
   const { id } = await params;
-  const { supabase } = await requireAdmin();
+  const { user, supabase } = await requireAdmin();
   const { data } = await supabase.from("checkins").select("*").eq("id", id).maybeSingle();
 
   if (!data) {
@@ -22,6 +24,7 @@ export default async function AdminCheckinDetailPage({ params }: AdminCheckinDet
   const record = data as Checkin;
   const { data: owner } = await supabase.from("profiles").select("*").eq("id", record.user_id).maybeSingle();
   const profile = owner as Profile | null;
+  const interactions = await fetchRecordInteractions(supabase, record.id, user.id);
 
   return (
     <div className="admin-stack">
@@ -55,6 +58,16 @@ export default async function AdminCheckinDetailPage({ params }: AdminCheckinDet
         }
         owner={profile}
         record={record}
+      />
+      <CheckinInteractions
+        allowDeleteAll
+        allowNewInteractions={false}
+        checkinId={record.id}
+        currentUserId={user.id}
+        returnPath={`/admin/checkins/${record.id}`}
+        likeCount={interactions.likeCount}
+        likedByMe={interactions.likedByMe}
+        comments={interactions.comments}
       />
     </div>
   );

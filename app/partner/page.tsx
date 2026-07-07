@@ -1,11 +1,16 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
+import { fetchRecentCheckins, RECORD_LIST_LIMIT, type CheckinSummary } from "@/lib/checkins";
 import { getTodayDate } from "@/lib/dates";
+import { getFriendlySupabaseError } from "@/lib/errors";
+import { fetchInteractionCounts } from "@/lib/interactions";
+import { fetchProfileById } from "@/lib/profiles";
 import { EmptyState } from "@/components/EmptyState";
+import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { RecordSummaryCard } from "@/components/RecordSummaryCard";
 import { UserShell } from "@/components/UserShell";
-import type { Checkin, Profile } from "@/types/database";
+import type { Profile } from "@/types/database";
 
 export default async function PartnerPage() {
   const { profile, supabase } = await requireUser();
@@ -31,9 +36,9 @@ export default async function PartnerPage() {
     );
   }
 
-  const [{ data: partner }, { data: records }, { data: todayRecords }] = await Promise.all([
-    supabase.from("profiles").select("*").eq("id", profile.bound_user_id).maybeSingle(),
-    supabase.from("checkins").select("*").eq("user_id", profile.bound_user_id).order("created_at", { ascending: false }),
+  const [{ data: partner, error: partnerError }, { data: records, error: recordsError }, { data: todayRecords, error: todayError }] = await Promise.all([
+    fetchProfileById(supabase, profile.bound_user_id),
+    fetchRecentCheckins(supabase, profile.bound_user_id, RECORD_LIST_LIMIT),
     supabase
       .from("checkins")
       .select("duration_minutes")
@@ -43,15 +48,17 @@ export default async function PartnerPage() {
   ]);
 
   const partnerProfile = partner as Profile | null;
+  const interactionCounts = await fetchInteractionCounts(supabase, (records || []).map((record) => record.id));
+  const errorMessage = getFriendlySupabaseError(partnerError || recordsError || todayError);
   const partnerTodayCount = todayRecords?.length || 0;
   const partnerTodayDuration = (todayRecords || []).reduce((total, record) => total + (record.duration_minutes || 0), 0);
 
   return (
     <UserShell profile={profile} title="对方记录" subtitle="查看监督对象的训练">
+      {errorMessage ? <p className="alert error">{errorMessage}</p> : null}
+
       <section className="partner-profile-card">
-        <div className="avatar-placeholder large" aria-hidden="true">
-          {(partnerProfile?.username || "对").slice(0, 1).toUpperCase()}
-        </div>
+        <ProfileAvatar profile={partnerProfile || { username: "对方", avatar_url: null }} size="lg" />
         <div>
           <p className="eyebrow">当前绑定对象</p>
           <h2>{partnerProfile?.username || "绑定对象"}</h2>
@@ -70,14 +77,15 @@ export default async function PartnerPage() {
       </section>
 
       {!records?.length ? (
-        <EmptyState title="对方还没有记录" description="对方提交打卡后，你会在这里看到完整记录。" />
+        <EmptyState title={errorMessage ? "对方记录暂时无法加载" : "对方还没有记录"} description={errorMessage ? "请稍后重试，或检查网络连接。" : "对方提交打卡后，你会在这里看到完整记录。"} />
       ) : (
         <section className="record-list">
-          {(records as Checkin[]).map((record) => (
-            <RecordSummaryCard detailHref={`/records/${record.id}`} owner={partnerProfile} record={record} key={record.id} />
+          {(records as CheckinSummary[]).map((record) => (
+            <RecordSummaryCard detailHref={`/records/${record.id}`} owner={partnerProfile} record={{ ...record, ...interactionCounts[record.id] }} key={record.id} />
           ))}
         </section>
       )}
+      {records && records.length >= RECORD_LIST_LIMIT ? <p className="form-note">默认显示最近 {RECORD_LIST_LIMIT} 条对方记录。</p> : null}
     </UserShell>
   );
 }

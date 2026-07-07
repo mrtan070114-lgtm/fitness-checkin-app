@@ -30,7 +30,8 @@ describe("multiple daily checkins source rules", () => {
     expect(read("components/CheckinForm.tsx")).toContain("本次运动名称");
     expect(read("components/CheckinForm.tsx")).toContain("添加本次运动");
     expect(read("components/RecordCard.tsx")).toContain("session_title");
-    expect(read("app/records/page.tsx")).toMatch(/order\("created_at", \{ ascending: false \}\)/);
-    expect(read("app/partner/page.tsx")).toMatch(/order\("created_at", \{ ascending: false \}\)/);
+    expect(read("app/records/page.tsx")).toContain("fetchRecentCheckins");
+    expect(read("app/partner/page.tsx")).toContain("fetchRecentCheckins");
+    expect(read("lib/checkins.ts")).toMatch(/order\("created_at", \{ ascending: false \}\)/);
   });
 });

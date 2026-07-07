@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { CheckinInteractions } from "@/components/CheckinInteractions";
 import { RecordCard } from "@/components/RecordCard";
 import { UserShell } from "@/components/UserShell";
 import { requireUser } from "@/lib/auth";
+import { fetchRecordInteractions } from "@/lib/interactions";
+import { fetchProfileById } from "@/lib/profiles";
 import type { Checkin, Profile } from "@/types/database";
 
 type RecordDetailPageProps = {
@@ -33,9 +36,11 @@ export default async function RecordDetailPage({ params }: RecordDetailPageProps
 
   let owner: Profile | null = null;
   if (!isOwnRecord) {
-    const { data: partner } = await supabase.from("profiles").select("*").eq("id", record.user_id).maybeSingle();
+    const { data: partner } = await fetchProfileById(supabase, record.user_id);
     owner = partner as Profile | null;
   }
+  const returnPath = `/records/${record.id}`;
+  const interactions = await fetchRecordInteractions(supabase, record.id, user.id);
 
   return (
     <UserShell profile={profile} title="记录详情" subtitle="完整运动记录">
@@ -46,6 +51,14 @@ export default async function RecordDetailPage({ params }: RecordDetailPageProps
       </div>
 
       <RecordCard owner={owner} record={record} />
+      <CheckinInteractions
+        checkinId={record.id}
+        currentUserId={user.id}
+        returnPath={returnPath}
+        likeCount={interactions.likeCount}
+        likedByMe={interactions.likedByMe}
+        comments={interactions.comments}
+      />
     </UserShell>
   );
 }

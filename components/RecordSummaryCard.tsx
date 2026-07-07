@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { Lock } from "lucide-react";
+import { Heart, Lock, MessageCircle } from "lucide-react";
 import { CheckinImage } from "@/components/CheckinImage";
 import { formatDisplayDate } from "@/lib/dates";
-import type { Checkin, Profile } from "@/types/database";
+import type { CheckinSummary } from "@/lib/checkins";
+import type { Profile } from "@/types/database";
 
 type RecordSummaryCardProps = {
-  record: Checkin;
+  record: CheckinSummary;
   detailHref: string;
   owner?: Pick<Profile, "username" | "email"> | null;
   adminActions?: React.ReactNode;
@@ -18,6 +19,8 @@ function emptyText(value: string | number | null | undefined, suffix = "") {
 
 export function RecordSummaryCard({ record, detailHref, owner, adminActions }: RecordSummaryCardProps) {
   const submittedAt = new Date(record.created_at).toLocaleString("zh-CN");
+  const likeCount = record.likeCount || 0;
+  const commentCount = record.commentCount || 0;
 
   return (
     <article className="record-summary-card">
@@ -45,6 +48,15 @@ export function RecordSummaryCard({ record, detailHref, owner, adminActions }: R
           <p className="summary-time">
             {formatDisplayDate(record.checkin_date)} · {submittedAt}
           </p>
+
+          <div className="interaction-badges" aria-label="互动统计">
+            <span>
+              <Heart size={13} aria-hidden="true" /> {likeCount}
+            </span>
+            <span>
+              <MessageCircle size={13} aria-hidden="true" /> {commentCount}
+            </span>
+          </div>
         </div>
 
         {record.image_url ? (

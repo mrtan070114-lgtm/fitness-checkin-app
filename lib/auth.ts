@@ -1,8 +1,10 @@
 import { redirect } from "next/navigation";
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
+import { PROFILE_SELECT } from "@/lib/profiles";
 import type { Profile } from "@/types/database";
 
-export async function getCurrentProfile() {
+export const getCurrentProfile = cache(async function getCurrentProfile() {
   const supabase = await createClient();
   const {
     data: { user }
@@ -12,12 +14,12 @@ export async function getCurrentProfile() {
     return { user: null, profile: null, supabase };
   }
 
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).maybeSingle();
+  const { data: profile } = await supabase.from("profiles").select(PROFILE_SELECT).eq("id", user.id).maybeSingle();
 
   return { user, profile: profile as Profile | null, supabase };
-}
+});
 
-export async function requireUser() {
+export const requireUser = cache(async function requireUser() {
   const { user, profile, supabase } = await getCurrentProfile();
 
   if (!user) {
@@ -29,7 +31,7 @@ export async function requireUser() {
   }
 
   return { user, profile, supabase };
-}
+});
 
 export async function requireAdmin() {
   const context = await requireUser();

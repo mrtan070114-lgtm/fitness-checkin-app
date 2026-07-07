@@ -42,6 +42,8 @@ export function CheckinImage({ imageUrl, alt, className = "record-image", errorC
       <img
         alt={alt}
         src={resolvedSrc}
+        loading="lazy"
+        decoding="async"
         onError={() => {
           console.error("图片加载失败", { image_url: imageUrl, resolvedSrc });
           setFailed(true);

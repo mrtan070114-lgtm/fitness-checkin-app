@@ -45,6 +45,16 @@ export function getMonthRange(dateString: string) {
   };
 }
 
+export function getWeekRange(dateString: string) {
+  const [year, month, day] = dateString.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  const dayOfWeek = date.getUTCDay() || 7;
+  const start = DATE_PARTS.format(new Date(Date.UTC(year, month - 1, day - dayOfWeek + 1)));
+  const end = DATE_PARTS.format(new Date(Date.UTC(year, month - 1, day - dayOfWeek + 7)));
+
+  return { start, end };
+}
+
 export function calculateStreak(checkinDates: string[], today: string) {
   const dateSet = new Set(checkinDates.filter((date) => date <= today));
   let cursor = dateSet.has(today) ? today : addDays(today, -1);

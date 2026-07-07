@@ -1,6 +1,9 @@
 import { redirect } from "next/navigation";
-import { bindPartner } from "@/app/bind/actions";
+import { bindPartner, unbindPartner } from "@/app/bind/actions";
 import { requireUser } from "@/lib/auth";
+import { fetchProfileById } from "@/lib/profiles";
+import { ConfirmSubmitButton } from "@/components/ConfirmSubmitButton";
+import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { SubmitButton } from "@/components/SubmitButton";
 import { UserShell } from "@/components/UserShell";
 import type { Profile } from "@/types/database";
@@ -19,13 +22,14 @@ export default async function BindPage({ searchParams }: BindPageProps) {
 
   let partner: Profile | null = null;
   if (profile.bound_user_id) {
-    const { data } = await supabase.from("profiles").select("*").eq("id", profile.bound_user_id).maybeSingle();
+    const { data } = await fetchProfileById(supabase, profile.bound_user_id);
     partner = data as Profile | null;
   }
 
   return (
     <UserShell profile={profile} title="绑定对象" subtitle="管理你的监督关系">
       {params.success ? <p className="alert success">绑定成功，双方现在可以互相查看记录。</p> : null}
+      {params.unbound ? <p className="alert success">已解除绑定。</p> : null}
       {typeof params.error === "string" ? <p className="alert error">{params.error}</p> : null}
 
       <section className="code-card">
@@ -36,10 +40,20 @@ export default async function BindPage({ searchParams }: BindPageProps) {
 
       {partner ? (
         <section className="info-card rich-card">
-          <p className="eyebrow">当前绑定对象</p>
-          <h2>{partner.username}</h2>
+          <div className="inline-profile-heading">
+            <ProfileAvatar profile={partner} size="lg" />
+            <div>
+              <p className="eyebrow">当前绑定对象</p>
+              <h2>{partner.username}</h2>
+            </div>
+          </div>
           <p>{partner.email}</p>
-          <p className="form-note">当前版本暂未开放解除绑定，需要调整绑定关系时请联系管理员处理。</p>
+          <form action={unbindPartner} className="button-row">
+            <input name="next_path" type="hidden" value="/bind" />
+            <ConfirmSubmitButton className="danger-button" pendingText="解除中...">
+              解除绑定
+            </ConfirmSubmitButton>
+          </form>
         </section>
       ) : (
         <form action={bindPartner} className="form-card">
