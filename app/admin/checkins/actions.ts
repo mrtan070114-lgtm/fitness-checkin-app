@@ -49,7 +49,7 @@ export async function deleteCheckin(formData: FormData) {
   }
 
   revalidatePath("/admin/checkins");
-  revalidatePath("/admin/dashboard");
+  revalidatePath("/admin");
   redirect("/admin/checkins?deleted=1");
 }
 
@@ -111,6 +111,7 @@ export async function updateCheckin(formData: FormData) {
   }
 
   revalidatePath("/admin/checkins");
+  revalidatePath("/admin");
   revalidatePath(`/admin/checkins/${parsed.data.id}/edit`);
   redirect("/admin/checkins?updated=1");
 }

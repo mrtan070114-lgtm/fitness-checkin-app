@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import { AdminDashboardOverview } from "@/app/admin/AdminDashboardOverview";
 
 export default function AdminIndexPage() {
-  redirect("/admin/dashboard");
+  return <AdminDashboardOverview />;
 }

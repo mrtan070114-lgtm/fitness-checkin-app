@@ -1,7 +1,7 @@
 {
-  "name": "双人健身打卡",
-  "short_name": "健身打卡",
-  "description": "双人监督健身记录 App",
+  "name": "TnT健身日记",
+  "short_name": "TnT健身日记",
+  "description": "TnT健身日记，双人监督健身记录 App",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

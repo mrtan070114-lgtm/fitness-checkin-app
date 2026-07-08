@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Smartphone } from "lucide-react";
 import { requireUser } from "@/lib/auth";
@@ -8,15 +7,11 @@ export default async function PwaPage() {
   const { profile } = await requireUser();
 
   if (profile.role === "admin") {
-    redirect("/admin/dashboard");
+    redirect("/admin");
   }
 
   return (
-    <UserShell profile={profile} title="添加到手机桌面" subtitle="像 App 一样打开健身打卡">
-      <div className="button-row">
-        <Link className="ghost-button" href="/profile">返回我的</Link>
-      </div>
-
+    <UserShell profile={profile} title="添加到手机桌面" subtitle="像 App 一样打开 TnT健身日记" showBackButton>
       <section className="info-card rich-card">
         <div className="panel-title-row">
           <div>

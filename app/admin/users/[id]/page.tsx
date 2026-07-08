@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
+import { BackButton } from "@/components/BackButton";
 import { RecordSummaryCard } from "@/components/RecordSummaryCard";
 import type { Checkin, Profile } from "@/types/database";
 
@@ -24,10 +24,13 @@ export default async function AdminUserDetailPage({ params }: AdminUserDetailPag
 
   return (
     <div className="admin-stack">
-      <section className="admin-heading">
-        <p className="eyebrow">用户详情</p>
-        <h1>{profile.username}</h1>
-        <p>{profile.email}</p>
+      <section className="admin-heading admin-heading-with-back">
+        <BackButton />
+        <div className="admin-heading-content">
+          <p className="eyebrow">用户详情</p>
+          <h1>{profile.username}</h1>
+          <p>{profile.email}</p>
+        </div>
       </section>
 
       <section className="admin-panel profile-detail">
@@ -52,9 +55,6 @@ export default async function AdminUserDetailPage({ params }: AdminUserDetailPag
       <section className="admin-panel">
         <div className="panel-title-row">
           <h2>该用户的打卡记录</h2>
-          <Link className="text-link" href="/admin/users">
-            返回用户管理
-          </Link>
         </div>
         {!records?.length ? (
           <p className="muted">暂无记录。</p>

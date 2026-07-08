@@ -28,7 +28,7 @@ describe("compact record cards and detail pages", () => {
 
   it("adds full read-only detail pages for normal users and admins", () => {
     expect(existsSync(join(root, "app/records/[id]/page.tsx"))).toBe(true);
-    expect(read("app/records/[id]/page.tsx")).toContain("返回记录");
+    expect(read("app/records/[id]/page.tsx")).toContain("showBackButton");
     expect(read("app/records/[id]/page.tsx")).toContain("RecordCard");
     expect(read("app/records/[id]/page.tsx")).not.toContain("deleteCheckin");
 

@@ -2,7 +2,7 @@
   "name": "fitness-checkin-app",
   "version": "1.0.0",
   "private": true,
-  "description": "双人互相监督健身打卡记录 Web App",
+  "description": "TnT健身日记，双人互相监督健身记录 Web App",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

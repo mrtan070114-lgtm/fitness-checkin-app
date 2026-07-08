@@ -1,6 +1,6 @@
-# 双人互相监督健身打卡记录 Web App
+# TnT健身日记
 
-这是一个使用 Next.js + Supabase 开发的健身打卡 Web App，包含：
+这是一个使用 Next.js + Supabase 开发的双人互相监督健身记录 Web App，包含：
 
 - 用户注册和登录
 - 普通用户与管理员角色

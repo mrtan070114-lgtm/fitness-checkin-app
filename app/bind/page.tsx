@@ -17,7 +17,7 @@ export default async function BindPage({ searchParams }: BindPageProps) {
   const params = searchParams ? await searchParams : {};
 
   if (profile.role === "admin") {
-    redirect("/admin/dashboard");
+    redirect("/admin");
   }
 
   let partner: Profile | null = null;
@@ -27,7 +27,7 @@ export default async function BindPage({ searchParams }: BindPageProps) {
   }
 
   return (
-    <UserShell profile={profile} title="绑定对象" subtitle="管理你的监督关系">
+    <UserShell profile={profile} title="绑定对象" subtitle="管理你的监督关系" showBackButton>
       {params.success ? <p className="alert success">绑定成功，双方现在可以互相查看记录。</p> : null}
       {params.unbound ? <p className="alert success">已解除绑定。</p> : null}
       {typeof params.error === "string" ? <p className="alert error">{params.error}</p> : null}

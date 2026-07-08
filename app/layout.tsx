@@ -2,12 +2,12 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "双人健身打卡",
-  description: "双人互相监督健身打卡记录 Web App",
+  title: "TnT健身日记",
+  description: "TnT健身日记，双人互相监督健身记录 Web App",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
-    title: "健身打卡",
+    title: "TnT健身日记",
     statusBarStyle: "default"
   },
   icons: {

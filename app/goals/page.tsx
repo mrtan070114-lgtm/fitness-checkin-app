@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { saveGoal } from "@/app/goals/actions";
 import { requireUser } from "@/lib/auth";
@@ -17,7 +16,7 @@ export default async function GoalsPage({ searchParams }: GoalsPageProps) {
   const params = searchParams ? await searchParams : {};
 
   if (profile.role === "admin") {
-    redirect("/admin/dashboard");
+    redirect("/admin");
   }
 
   const today = getTodayDate();
@@ -36,13 +35,7 @@ export default async function GoalsPage({ searchParams }: GoalsPageProps) {
   const dayPercent = getCompletionPercent(todayMinutes, currentGoal?.daily_minutes_target);
 
   return (
-    <UserShell profile={profile} title="健身目标" subtitle="设置你的阶段目标">
-      <div className="button-row">
-        <Link className="ghost-button" href="/profile">
-          返回我的
-        </Link>
-      </div>
-
+    <UserShell profile={profile} title="健身目标" subtitle="设置你的阶段目标" showBackButton>
       {params.saved ? <p className="alert success">健身目标已保存。</p> : null}
       {typeof params.error === "string" ? <p className="alert error">{params.error}</p> : null}
 

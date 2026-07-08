@@ -44,5 +44,5 @@ export async function requireAdmin() {
 }
 
 export function roleHomePath(profile: Pick<Profile, "role"> | null) {
-  return profile?.role === "admin" ? "/admin/dashboard" : "/dashboard";
+  return profile?.role === "admin" ? "/admin" : "/dashboard";
 }

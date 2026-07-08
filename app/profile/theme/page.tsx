@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Check } from "lucide-react";
 import type { CSSProperties } from "react";
@@ -47,19 +46,13 @@ export default async function ThemePage({ searchParams }: ThemePageProps) {
   const params = searchParams ? await searchParams : {};
 
   if (profile.role === "admin") {
-    redirect("/admin/dashboard");
+    redirect("/admin");
   }
 
   const currentTheme = getThemeByColor(profile.theme_color);
 
   return (
-    <UserShell profile={profile} title="外观设置" subtitle="选择你喜欢的主题颜色">
-      <div className="button-row">
-        <Link className="ghost-button" href="/profile">
-          返回我的
-        </Link>
-      </div>
-
+    <UserShell profile={profile} title="外观设置" subtitle="选择你喜欢的主题颜色" showBackButton>
       {params.success || params.updated ? <p className="alert success">主题已更新</p> : null}
       {typeof params.error === "string" ? <p className="alert error">{params.error}</p> : null}
 

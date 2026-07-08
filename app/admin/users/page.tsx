@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth";
+import { BackButton } from "@/components/BackButton";
 import type { Profile } from "@/types/database";
 
 export default async function AdminUsersPage() {
@@ -10,9 +11,12 @@ export default async function AdminUsersPage() {
 
   return (
     <div className="admin-stack">
-      <section className="admin-heading">
-        <p className="eyebrow">用户管理</p>
-        <h1>所有用户</h1>
+      <section className="admin-heading admin-heading-with-back">
+        <BackButton />
+        <div className="admin-heading-content">
+          <p className="eyebrow">用户管理</p>
+          <h1>所有用户</h1>
+        </div>
       </section>
 
       <section className="admin-panel table-panel">

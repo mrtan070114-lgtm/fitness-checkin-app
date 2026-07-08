@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { addDays, calculateStreak, getMonthRange, getTodayDate, getWeekRange } from "@/lib/dates";
@@ -43,7 +42,7 @@ export default async function StatsPage() {
   const { user, profile, supabase } = await requireUser();
 
   if (profile.role === "admin") {
-    redirect("/admin/dashboard");
+    redirect("/admin");
   }
 
   const today = getTodayDate();
@@ -74,11 +73,7 @@ export default async function StatsPage() {
   const maxTypeCount = Math.max(1, ...typeCounts.map((item) => item.count));
 
   return (
-    <UserShell profile={profile} title="数据统计" subtitle="体重趋势和训练表现">
-      <div className="button-row">
-        <Link className="ghost-button" href="/profile">返回我的</Link>
-      </div>
-
+    <UserShell profile={profile} title="数据统计" subtitle="体重趋势和训练表现" showBackButton>
       <section className="info-card rich-card">
         <p className="eyebrow">体重变化曲线</p>
         <WeightTrendChart points={weightPoints} />

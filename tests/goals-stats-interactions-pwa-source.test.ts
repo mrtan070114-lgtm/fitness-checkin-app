@@ -55,9 +55,10 @@ describe("goals stats interactions and pwa source requirements", () => {
     const dashboard = read("app/dashboard/page.tsx");
     const stats = read("app/stats/page.tsx");
 
-    expect(dashboard).toContain("本周目标完成度");
-    expect(dashboard).toContain("今日目标完成度");
-    expect(dashboard).toContain("目标体重进度");
+    expect(dashboard).toContain("目标摘要");
+    expect(dashboard).toContain("本周次数");
+    expect(dashboard).toContain("今日时长");
+    expect(dashboard).toContain("目标体重");
     expect(stats).toContain("WeightTrendChart");
     expect(stats).toContain("训练类型占比");
     expect(stats).toContain("记录更多体重后即可生成趋势图");
@@ -87,7 +88,7 @@ describe("goals stats interactions and pwa source requirements", () => {
     const manifest = read("public/manifest.json");
     const layout = read("app/layout.tsx");
 
-    expect(manifest).toContain('"name": "双人健身打卡"');
+    expect(manifest).toContain('"name": "TnT健身日记"');
     expect(manifest).toContain('"display": "standalone"');
     expect(layout).toContain('manifest: "/manifest.json"');
     expect(layout).toContain("appleWebApp");

@@ -48,7 +48,7 @@ export function LoginForm() {
       return;
     }
 
-    router.replace(profile.role === "admin" ? "/admin/dashboard" : "/dashboard");
+    router.replace(profile.role === "admin" ? "/admin" : "/dashboard");
     router.refresh();
   }
 

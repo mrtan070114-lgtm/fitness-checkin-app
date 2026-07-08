@@ -9,7 +9,7 @@ type AdminShellProps = {
 };
 
 const adminNav = [
-  { href: "/admin/dashboard", label: "后台首页", icon: BarChart3 },
+  { href: "/admin", label: "后台首页", icon: BarChart3 },
   { href: "/admin/users", label: "用户管理", icon: UsersRound },
   { href: "/admin/checkins", label: "记录管理", icon: CalendarCheck }
 ];
@@ -21,7 +21,7 @@ export function AdminShell({ profile, children }: AdminShellProps) {
         <div>
           <div className="brand-mark">
             <Dumbbell size={22} aria-hidden="true" />
-            <span>Fitness Admin</span>
+            <span>TnT Admin</span>
           </div>
           <p className="admin-user">{profile.username}</p>
         </div>

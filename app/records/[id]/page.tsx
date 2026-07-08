@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { CheckinInteractions } from "@/components/CheckinInteractions";
 import { RecordCard } from "@/components/RecordCard";
@@ -43,13 +42,7 @@ export default async function RecordDetailPage({ params }: RecordDetailPageProps
   const interactions = await fetchRecordInteractions(supabase, record.id, user.id);
 
   return (
-    <UserShell profile={profile} title="记录详情" subtitle="完整运动记录">
-      <div className="button-row">
-        <Link className="ghost-button" href={isOwnRecord ? "/records" : "/partner"}>
-          返回记录
-        </Link>
-      </div>
-
+    <UserShell profile={profile} title="记录详情" subtitle="完整运动记录" showBackButton>
       <RecordCard owner={owner} record={record} />
       <CheckinInteractions
         checkinId={record.id}

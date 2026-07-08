@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { updateProfile } from "@/app/profile/edit/actions";
 import { requireUser } from "@/lib/auth";
@@ -15,17 +14,11 @@ export default async function ProfileEditPage({ searchParams }: ProfileEditPageP
   const params = searchParams ? await searchParams : {};
 
   if (profile.role === "admin") {
-    redirect("/admin/dashboard");
+    redirect("/admin");
   }
 
   return (
-    <UserShell profile={profile} title="编辑个人资料" subtitle="修改你的头像和昵称">
-      <div className="button-row">
-        <Link className="ghost-button" href="/profile">
-          返回我的
-        </Link>
-      </div>
-
+    <UserShell profile={profile} title="编辑个人资料" subtitle="修改你的头像和昵称" showBackButton>
       {typeof params.error === "string" ? <p className="alert error">{params.error}</p> : null}
 
       <form action={updateProfile} className="checkin-form-stack" encType="multipart/form-data">

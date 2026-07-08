@@ -2,6 +2,7 @@ import Link from "next/link";
 import { deleteCheckin } from "@/app/admin/checkins/actions";
 import { requireAdmin } from "@/lib/auth";
 import { TRAINING_TYPES } from "@/lib/constants";
+import { BackButton } from "@/components/BackButton";
 import { RecordSummaryCard } from "@/components/RecordSummaryCard";
 import { SubmitButton } from "@/components/SubmitButton";
 import type { Checkin, Profile, TrainingType } from "@/types/database";
@@ -44,9 +45,12 @@ export default async function AdminCheckinsPage({ searchParams }: AdminCheckinsP
 
   return (
     <div className="admin-stack">
-      <section className="admin-heading">
-        <p className="eyebrow">记录管理</p>
-        <h1>所有打卡记录</h1>
+      <section className="admin-heading admin-heading-with-back">
+        <BackButton />
+        <div className="admin-heading-content">
+          <p className="eyebrow">记录管理</p>
+          <h1>所有打卡记录</h1>
+        </div>
       </section>
 
       {params.deleted ? <p className="alert success">记录已删除。</p> : null}

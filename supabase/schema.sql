@@ -1,4 +1,4 @@
--- 双人互相监督健身打卡记录 Web App
+-- TnT健身日记 Web App
 -- 在 Supabase SQL Editor 中完整执行本文件。
 
 create extension if not exists pgcrypto;

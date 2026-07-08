@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { deleteCheckin } from "@/app/admin/checkins/actions";
+import { BackButton } from "@/components/BackButton";
 import { CheckinInteractions } from "@/components/CheckinInteractions";
 import { RecordCard } from "@/components/RecordCard";
 import { SubmitButton } from "@/components/SubmitButton";
@@ -28,15 +29,15 @@ export default async function AdminCheckinDetailPage({ params }: AdminCheckinDet
 
   return (
     <div className="admin-stack">
-      <section className="admin-heading">
-        <p className="eyebrow">记录详情</p>
-        <h1>{profile?.username || "用户"} 的运动记录</h1>
+      <section className="admin-heading admin-heading-with-back">
+        <BackButton />
+        <div className="admin-heading-content">
+          <p className="eyebrow">记录详情</p>
+          <h1>{profile?.username || "用户"} 的运动记录</h1>
+        </div>
       </section>
 
       <div className="button-row">
-        <Link className="ghost-button" href="/admin/checkins">
-          返回记录
-        </Link>
         <Link className="secondary-button" href={`/admin/checkins/${record.id}/edit`}>
           编辑记录
         </Link>

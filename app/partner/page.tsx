@@ -18,7 +18,7 @@ export default async function PartnerPage() {
   const today = getTodayDate();
 
   if (profile.role === "admin") {
-    redirect("/admin/dashboard");
+    redirect("/admin");
   }
 
   if (!profile.bound_user_id) {

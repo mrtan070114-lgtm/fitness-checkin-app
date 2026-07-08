@@ -96,7 +96,7 @@ export default async function RecordsPage({ searchParams }: RecordsPageProps) {
   const params = searchParams ? await searchParams : {};
 
   if (profile.role === "admin") {
-    redirect("/admin/dashboard");
+    redirect("/admin");
   }
 
   const today = getTodayDate();

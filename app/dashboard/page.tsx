@@ -27,7 +27,7 @@ export default async function DashboardPage() {
   const { user, profile, supabase } = await requireUser();
 
   if (profile.role === "admin") {
-    redirect("/admin/dashboard");
+    redirect("/admin");
   }
 
   const today = getTodayDate();

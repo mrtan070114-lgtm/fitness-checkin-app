@@ -15,7 +15,7 @@ export default async function CheckinPage({ searchParams }: CheckinPageProps) {
   const params = searchParams ? await searchParams : {};
 
   if (profile.role === "admin") {
-    redirect("/admin/dashboard");
+    redirect("/admin");
   }
 
   const today = getTodayDate();

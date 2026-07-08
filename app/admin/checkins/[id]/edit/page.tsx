@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { updateCheckin } from "@/app/admin/checkins/actions";
+import { BackButton } from "@/components/BackButton";
 import { CheckinImage } from "@/components/CheckinImage";
 import { requireAdmin } from "@/lib/auth";
 import { MOODS, TRAINING_TYPES } from "@/lib/constants";
@@ -28,9 +28,12 @@ export default async function AdminEditCheckinPage({ params, searchParams }: Adm
 
   return (
     <div className="admin-stack">
-      <section className="admin-heading">
-        <p className="eyebrow">编辑记录</p>
-        <h1>{profile?.username || "用户"} 的打卡记录</h1>
+      <section className="admin-heading admin-heading-with-back">
+        <BackButton />
+        <div className="admin-heading-content">
+          <p className="eyebrow">编辑记录</p>
+          <h1>{profile?.username || "用户"} 的打卡记录</h1>
+        </div>
       </section>
 
       {typeof query.error === "string" ? <p className="alert error">{query.error}</p> : null}
@@ -97,9 +100,6 @@ export default async function AdminEditCheckinPage({ params, searchParams }: Adm
 
         <div className="button-row">
           <SubmitButton pendingText="保存中...">保存修改</SubmitButton>
-          <Link className="ghost-button" href="/admin/checkins">
-            返回
-          </Link>
         </div>
       </form>
     </div>

@@ -31,8 +31,8 @@ const settingsItems: { label: string; href?: string; icon: LucideIcon }[] = [
   { label: "数据统计", href: "/stats", icon: BarChart3 },
   { label: "外观设置", href: "/profile/theme", icon: Palette },
   { label: "添加到手机桌面", href: "/pwa", icon: Smartphone },
-  { label: "账号安全", icon: ShieldCheck },
-  { label: "关于 App", icon: Info }
+  { label: "账号安全", href: "/profile/security", icon: ShieldCheck },
+  { label: "关于 App", href: "/profile/about", icon: Info }
 ];
 
 type ProfilePageProps = {
@@ -46,7 +46,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
   const roleBadgeClass = profile.role === "admin" ? "role-badge admin" : "role-badge";
 
   if (profile.role === "admin") {
-    redirect("/admin/dashboard");
+    redirect("/admin");
   }
 
   const today = getTodayDate();
