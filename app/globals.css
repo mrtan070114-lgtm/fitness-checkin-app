@@ -32,13 +32,17 @@
 }
 
 html {
+  width: 100%;
   min-height: 100%;
   background: var(--app-status-bar-color);
 }
 
 body {
+  width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
   margin: 0;
+  overflow-x: hidden;
   background: linear-gradient(180deg, #f7faf5 0%, var(--bg) 48%, #e7f0ea 100%);
   color: var(--text);
   font-family:
@@ -73,16 +77,24 @@ img {
 }
 
 .user-shell {
+  position: fixed;
+  inset: 0;
   min-height: 100dvh;
+  overflow: hidden;
+  background: linear-gradient(180deg, #f7faf5 0%, var(--bg) 48%, #e7f0ea 100%);
 }
 
 .page-shell {
   width: min(100%, 720px);
+  height: 100dvh;
   margin: 0 auto;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
   padding-right: 16px;
   padding-left: 16px;
   padding-top: calc(14px + env(safe-area-inset-top));
   padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  -webkit-overflow-scrolling: touch;
 }
 
 .page-shell.with-bottom-nav {
