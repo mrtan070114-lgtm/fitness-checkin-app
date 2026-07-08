@@ -1,6 +1,6 @@
 import type { Mood, TrainingType } from "@/types/database";
 
-export const TRAINING_TYPES = ["胸", "背", "腿", "肩", "手臂", "有氧", "休息"] as const satisfies readonly TrainingType[];
+export const TRAINING_TYPES = ["腹", "胸", "背", "腿", "肩", "手臂", "有氧"] as const satisfies readonly TrainingType[];
 
 export const MOODS = ["很好", "不错", "一般", "疲惫", "低落"] as const satisfies readonly Mood[];
 

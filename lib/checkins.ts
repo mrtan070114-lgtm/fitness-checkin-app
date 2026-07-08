@@ -35,13 +35,31 @@ export type CheckinActivity = Pick<
 
 type AppSupabaseClient = SupabaseClient<Database>;
 
-export function fetchRecentCheckins(supabase: AppSupabaseClient, userId: string, limit = RECORD_LIST_LIMIT) {
-  return supabase
+type CheckinDateQuery = {
+  startDate?: string;
+  endDate?: string;
+};
+
+export function fetchRecentCheckins(
+  supabase: AppSupabaseClient,
+  userId: string,
+  limit = RECORD_LIST_LIMIT,
+  dateQuery: CheckinDateQuery = {}
+) {
+  let query = supabase
     .from("checkins")
     .select(RECORD_SUMMARY_COLUMNS)
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false })
-    .range(0, limit - 1);
+    .eq("user_id", userId);
+
+  if (dateQuery.startDate) {
+    query = query.gte("checkin_date", dateQuery.startDate);
+  }
+
+  if (dateQuery.endDate) {
+    query = query.lte("checkin_date", dateQuery.endDate);
+  }
+
+  return query.order("created_at", { ascending: false }).range(0, limit - 1);
 }
 
 export function fetchDashboardActivity(supabase: AppSupabaseClient, userId: string, startDate: string, endDate: string) {

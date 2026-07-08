@@ -11,7 +11,7 @@ type WeightPoint = {
   weight: number;
 };
 
-const TRAINING_ORDER: TrainingType[] = ["胸", "背", "腿", "肩", "手臂", "有氧", "休息"];
+const TRAINING_ORDER: TrainingType[] = ["腹", "胸", "背", "腿", "肩", "手臂", "有氧"];
 
 function getWeightPoints(records: Pick<Checkin, "checkin_date" | "weight" | "created_at">[]) {
   const latestByDate = new Map<string, WeightPoint & { created_at: string }>();

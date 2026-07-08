@@ -2,7 +2,7 @@ export type UserRole = "user" | "admin";
 
 export type ThemeColor = "green" | "blue" | "purple" | "pink" | "orange" | "black";
 
-export type TrainingType = "胸" | "背" | "腿" | "肩" | "手臂" | "有氧" | "休息";
+export type TrainingType = "腹" | "胸" | "背" | "腿" | "肩" | "手臂" | "有氧";
 
 export type Mood = "很好" | "不错" | "一般" | "疲惫" | "低落";
 

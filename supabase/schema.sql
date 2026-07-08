@@ -25,7 +25,7 @@ create table if not exists public.checkins (
   user_id uuid not null references public.profiles(id) on delete cascade,
   checkin_date date not null,
   session_title text null,
-  training_type text not null check (training_type in ('胸', '背', '腿', '肩', '手臂', '有氧', '休息')),
+  training_type text not null check (training_type in ('腹', '胸', '背', '腿', '肩', '手臂', '有氧')),
   duration_minutes integer null check (duration_minutes is null or duration_minutes between 0 and 1440),
   weight numeric null check (weight is null or weight between 0 and 500),
   diet text null,
