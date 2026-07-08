@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { CalendarCheck, ListFilter } from "lucide-react";
 import { requireUser } from "@/lib/auth";
 import { fetchRecentCheckins, RECORD_LIST_LIMIT, type CheckinSummary } from "@/lib/checkins";
 import { formatDisplayDate, getMonthRange, getTodayDate, getWeekRange } from "@/lib/dates";
@@ -116,11 +117,22 @@ export default async function RecordsPage({ searchParams }: RecordsPageProps) {
       {params.created ? <p className="alert success">运动记录添加成功，记录已锁定。</p> : null}
       {errorMessage ? <p className="alert error">{errorMessage}</p> : null}
 
+      <section className="records-overview-card">
+        <div className="records-overview-icon">
+          <CalendarCheck size={22} aria-hidden="true" />
+        </div>
+        <div>
+          <p className="eyebrow">记录列表</p>
+          <h2>{dateFilter.title}</h2>
+          <p>共显示 {records?.length || 0} 条，点击卡片查看饮食、备注、图片和互动。</p>
+        </div>
+      </section>
+
       <section className="records-filter-card" aria-label="记录筛选">
         <div className="records-filter-heading">
           <div>
             <p className="eyebrow">筛选记录</p>
-            <h2>{dateFilter.title}</h2>
+            <h2><ListFilter size={18} aria-hidden="true" /> 选择日期范围</h2>
           </div>
           <span>{records?.length || 0} 条</span>
         </div>

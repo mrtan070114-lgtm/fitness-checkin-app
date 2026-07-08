@@ -13,9 +13,11 @@ type UserShellProps = {
 
 export function UserShell({ profile, title, subtitle, hideHeader = false, children }: UserShellProps) {
   return (
-    <div className="page-shell with-bottom-nav" style={getThemeCssVariables(profile.theme_color)}>
-      {hideHeader ? null : <AppHeader profile={profile} title={title} subtitle={subtitle} />}
-      <main className="content-stack">{children}</main>
+    <div className="user-shell" style={getThemeCssVariables(profile.theme_color)}>
+      <div className="page-shell with-bottom-nav">
+        {hideHeader ? null : <AppHeader profile={profile} title={title} subtitle={subtitle} />}
+        <main className="content-stack">{children}</main>
+      </div>
       <BottomNav />
     </div>
   );

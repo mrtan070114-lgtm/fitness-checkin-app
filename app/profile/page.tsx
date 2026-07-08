@@ -1,6 +1,19 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ChevronRight } from "lucide-react";
+import {
+  Activity,
+  BarChart3,
+  CalendarDays,
+  ChevronRight,
+  Flame,
+  Info,
+  Palette,
+  ShieldCheck,
+  Smartphone,
+  Target,
+  UserPen
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { unbindPartner } from "@/app/bind/actions";
 import { requireUser } from "@/lib/auth";
 import { calculateStreak, getMonthRange, getTodayDate } from "@/lib/dates";
@@ -12,14 +25,14 @@ import { SignOutButton } from "@/components/SignOutButton";
 import { UserShell } from "@/components/UserShell";
 import type { Profile } from "@/types/database";
 
-const settingsItems = [
-  { label: "编辑个人资料", href: "/profile/edit" },
-  { label: "健身目标", href: "/goals" },
-  { label: "数据统计", href: "/stats" },
-  { label: "外观设置", href: "/profile/theme" },
-  { label: "添加到手机桌面", href: "/pwa" },
-  { label: "账号安全" },
-  { label: "关于 App" }
+const settingsItems: { label: string; href?: string; icon: LucideIcon }[] = [
+  { label: "编辑个人资料", href: "/profile/edit", icon: UserPen },
+  { label: "健身目标", href: "/goals", icon: Target },
+  { label: "数据统计", href: "/stats", icon: BarChart3 },
+  { label: "外观设置", href: "/profile/theme", icon: Palette },
+  { label: "添加到手机桌面", href: "/pwa", icon: Smartphone },
+  { label: "账号安全", icon: ShieldCheck },
+  { label: "关于 App", icon: Info }
 ];
 
 type ProfilePageProps = {
@@ -62,42 +75,59 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
       {typeof params.error === "string" ? <p className="alert error">{params.error}</p> : null}
       {errorMessage ? <p className="alert error">{errorMessage}</p> : null}
 
-      <section className="profile-card">
-        <ProfileAvatar profile={profile} size="xl" />
-        <div className="profile-main">
-          <h2>{profile.username}</h2>
-          <p>{profile.email}</p>
-          <div className="profile-badges">
-            <span className={roleBadgeClass}>{roleLabel}</span>
-            <span className="code-chip">绑定码 {profile.bind_code}</span>
+      <section className="profile-hero-card">
+        <div className="profile-hero-top">
+          <ProfileAvatar profile={profile} size="xl" />
+          <div className="profile-main">
+            <p className="eyebrow">个人中心</p>
+            <h2>{profile.username}</h2>
+            <p>{profile.email}</p>
+            <div className="profile-badges">
+              <span className={roleBadgeClass}>{roleLabel}</span>
+              <span className="code-chip">绑定码 {profile.bind_code}</span>
+            </div>
           </div>
         </div>
+        <Link className="profile-edit-shortcut" href="/profile/edit">
+          <UserPen size={16} aria-hidden="true" />
+          编辑资料
+        </Link>
       </section>
 
-      <section className="info-card rich-card">
-        <p className="eyebrow">我的数据</p>
-        <div className="metric-grid">
-          <article className="mini-stat">
+      <section className="profile-section-card">
+        <div className="profile-section-heading">
+          <div>
+            <p className="eyebrow">我的数据</p>
+            <h2>运动概览</h2>
+          </div>
+          <Activity size={22} aria-hidden="true" />
+        </div>
+        <div className="profile-metric-grid">
+          <article>
+            <Activity size={18} aria-hidden="true" />
             <span>累计运动次数</span>
             <strong>{totalCount} 次</strong>
           </article>
-          <article className="mini-stat">
+          <article>
+            <BarChart3 size={18} aria-hidden="true" />
             <span>累计运动分钟</span>
             <strong>{totalMinutes} 分钟</strong>
           </article>
-          <article className="mini-stat">
+          <article>
+            <Flame size={18} aria-hidden="true" />
             <span>连续运动天数</span>
             <strong>{streak} 天</strong>
           </article>
-          <article className="mini-stat">
+          <article>
+            <CalendarDays size={18} aria-hidden="true" />
             <span>本月运动次数</span>
             <strong>{monthCount} 次</strong>
           </article>
         </div>
       </section>
 
-      <section className="info-card rich-card">
-        <div className="panel-title-row">
+      <section className="profile-section-card">
+        <div className="profile-section-heading">
           <div className="inline-profile-heading">
             {partnerProfile ? <ProfileAvatar profile={partnerProfile} size="sm" /> : null}
             <div>
@@ -122,20 +152,31 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
         <p className="muted">{partnerProfile?.email || "绑定后可以互相查看运动记录。"}</p>
       </section>
 
-      <section className="settings-list" aria-label="设置列表">
-        {settingsItems.map((item) => (
-          item.href ? (
-            <Link className="settings-item" href={item.href} key={item.label}>
-              <span>{item.label}</span>
-              <ChevronRight size={18} aria-hidden="true" />
-            </Link>
-          ) : (
-            <button className="settings-item" type="button" key={item.label}>
-              <span>{item.label}</span>
-              <ChevronRight size={18} aria-hidden="true" />
-            </button>
-          )
-        ))}
+      <section className="profile-section-card settings-section" aria-label="设置列表">
+        <div className="profile-section-heading">
+          <div>
+            <p className="eyebrow">功能设置</p>
+            <h2>管理你的 App</h2>
+          </div>
+          <ChevronRight size={22} aria-hidden="true" />
+        </div>
+        <div className="settings-menu">
+          {settingsItems.map((item) => {
+            const Icon = item.icon;
+
+            return item.href ? (
+              <Link className="settings-item" href={item.href} key={item.label}>
+                <span className="settings-item-label"><Icon size={18} aria-hidden="true" /> {item.label}</span>
+                <ChevronRight size={18} aria-hidden="true" />
+              </Link>
+            ) : (
+              <button className="settings-item" type="button" key={item.label}>
+                <span className="settings-item-label"><Icon size={18} aria-hidden="true" /> {item.label}</span>
+                <ChevronRight size={18} aria-hidden="true" />
+              </button>
+            );
+          })}
+        </div>
       </section>
 
       <section className="logout-panel">

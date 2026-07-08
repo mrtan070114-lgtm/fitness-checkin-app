@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { CalendarCheck, Clock3, Link2, UsersRound } from "lucide-react";
 import { requireUser } from "@/lib/auth";
 import { fetchRecentCheckins, RECORD_LIST_LIMIT, type CheckinSummary } from "@/lib/checkins";
 import { getTodayDate } from "@/lib/dates";
@@ -57,23 +58,39 @@ export default async function PartnerPage() {
     <UserShell profile={profile} title="对方记录" subtitle="查看监督对象的训练">
       {errorMessage ? <p className="alert error">{errorMessage}</p> : null}
 
-      <section className="partner-profile-card">
-        <ProfileAvatar profile={partnerProfile || { username: "对方", avatar_url: null }} size="lg" />
-        <div>
-          <p className="eyebrow">当前绑定对象</p>
-          <h2>{partnerProfile?.username || "绑定对象"}</h2>
-          <p className="muted">{partnerProfile?.email || "暂无邮箱"}</p>
+      <section className="partner-hero-card">
+        <div className="partner-hero-main">
+          <ProfileAvatar profile={partnerProfile || { username: "对方", avatar_url: null }} size="lg" />
+          <div>
+            <p className="eyebrow">当前绑定对象</p>
+            <h2>{partnerProfile?.username || "绑定对象"}</h2>
+            <p>{partnerProfile?.email || "暂无邮箱"}</p>
+          </div>
         </div>
-        <dl className="partner-metrics">
-          <div>
-            <dt>今日运动次数</dt>
-            <dd>{partnerTodayCount} 次</dd>
-          </div>
-          <div>
-            <dt>今日累计时长</dt>
-            <dd>{partnerTodayDuration} 分钟</dd>
-          </div>
-        </dl>
+        <Link className="partner-manage-link" href="/bind">
+          <Link2 size={16} aria-hidden="true" />
+          管理绑定
+        </Link>
+        <div className="partner-hero-metrics" aria-label="对方今日运动数据">
+          <article>
+            <CalendarCheck size={18} aria-hidden="true" />
+            <span>今日运动</span>
+            <strong>{partnerTodayCount} 次</strong>
+          </article>
+          <article>
+            <Clock3 size={18} aria-hidden="true" />
+            <span>累计时长</span>
+            <strong>{partnerTodayDuration} 分钟</strong>
+          </article>
+        </div>
+      </section>
+
+      <section className="partner-records-heading">
+        <div>
+          <p className="eyebrow">监督记录</p>
+          <h2>最近 {records?.length || 0} 条运动</h2>
+        </div>
+        <UsersRound size={22} aria-hidden="true" />
       </section>
 
       {!records?.length ? (
