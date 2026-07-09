@@ -43,7 +43,9 @@ describe("partner records loading requirements", () => {
     const rls = read("supabase/fix_partner_checkins_rls.sql");
 
     expect(rls).toMatch(/alter table public\.checkins enable row level security/i);
+    expect(rls).toMatch(/grant select,\s*insert on public\.checkins to authenticated/i);
     expect(rls).toMatch(/create policy checkins_select_own_bound_admin/i);
+    expect(rls).toMatch(/create policy checkins_insert_own_locked/i);
     expect(rls).toContain("user_id = (select auth.uid())");
     expect(rls).toContain("public.is_admin()");
     expect(rls).toContain("from public.profiles");

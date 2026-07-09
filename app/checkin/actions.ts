@@ -8,6 +8,8 @@ import { getTodayDate } from "@/lib/dates";
 import { hasAnyExerciseCount, parseExerciseDetailsForm } from "@/lib/exerciseDetails";
 import { requireUser } from "@/lib/auth";
 import { isUsableImage, uploadCheckinImage } from "@/lib/uploads";
+import { isMissingOptionalCheckinColumnError } from "@/lib/checkins";
+import type { CheckinInsert } from "@/types/database";
 
 const nullableText = z.preprocess((value) => {
   if (typeof value !== "string") return null;
@@ -88,7 +90,7 @@ export async function createCheckin(formData: FormData) {
     }
   }
 
-  const { error } = await supabase.from("checkins").insert({
+  const checkinInsertValues: CheckinInsert = {
     user_id: user.id,
     checkin_date: today,
     session_title: parsed.data.session_title,
@@ -103,9 +105,31 @@ export async function createCheckin(formData: FormData) {
     note: parsed.data.note,
     image_url: imageUrl,
     locked: true
-  });
+  };
+
+  const { error: insertError } = await supabase.from("checkins").insert(checkinInsertValues);
+  let error = insertError;
+
+  if (isMissingOptionalCheckinColumnError(insertError)) {
+    const legacyCheckinInsertValues: CheckinInsert = {
+      user_id: checkinInsertValues.user_id,
+      checkin_date: checkinInsertValues.checkin_date,
+      session_title: checkinInsertValues.session_title,
+      training_type: checkinInsertValues.training_type,
+      duration_minutes: checkinInsertValues.duration_minutes,
+      weight: checkinInsertValues.weight,
+      diet: checkinInsertValues.diet,
+      mood: checkinInsertValues.mood,
+      note: checkinInsertValues.note,
+      image_url: checkinInsertValues.image_url,
+      locked: checkinInsertValues.locked
+    };
+    const legacyResult = await supabase.from("checkins").insert(legacyCheckinInsertValues);
+    error = legacyResult.error;
+  }
 
   if (error) {
+    console.error("create checkin failed", error);
     fail(error.message);
   }
 
