@@ -246,7 +246,7 @@ export function ExerciseDetailsFields({
           <div className="exercise-picker-grid custom-trigger-grid">
             <button className="exercise-action-chip exercise-custom-trigger" type="button" onClick={() => setCustomOpen(true)}>
               <Plus size={15} aria-hidden="true" />
-              自定义动作
+              自定义
             </button>
           </div>
         ) : null}

@@ -73,7 +73,7 @@ export function CheckinForm() {
         </div>
       </details>
 
-      <section className="submit-panel checkin-submit-panel checkin-sticky-submit">
+      <section className="submit-panel checkin-submit-panel">
         <span className="checkin-selected-count">已选 <ExerciseSelectionCount /> 个动作</span>
         <SubmitButton pendingText="正在保存...">添加本次运动</SubmitButton>
       </section>

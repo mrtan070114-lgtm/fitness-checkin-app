@@ -1086,7 +1086,7 @@ textarea:focus {
 
 .enhanced-checkin-form {
   gap: 14px;
-  padding-bottom: calc(116px + env(safe-area-inset-bottom));
+  padding-bottom: 0;
 }
 
 .checkin-step-card {
@@ -1212,6 +1212,7 @@ textarea:focus {
   background: #fff;
   color: var(--muted);
   font-weight: 800;
+  white-space: nowrap;
 }
 
 .exercise-filter-tabs {
@@ -1257,6 +1258,7 @@ textarea:focus {
 }
 
 .exercise-custom-trigger {
+  min-width: 0;
   border-color: var(--color-accent-border);
   color: var(--color-primary-dark);
 }
@@ -1443,18 +1445,14 @@ textarea:focus {
   padding: 0 14px 14px;
 }
 
-.checkin-sticky-submit {
-  position: sticky;
-  bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom) + 12px);
-  z-index: 50;
+.checkin-submit-panel {
   grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   gap: 10px;
   padding: 12px;
   border-color: var(--color-accent-border);
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 -12px 34px rgba(20, 43, 29, 0.12);
-  backdrop-filter: blur(14px);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: var(--shadow);
 }
 
 .checkin-selected-count {

@@ -72,7 +72,7 @@ describe("exercise details source requirements", () => {
     expect(read("app/stats/page.tsx")).toContain("动作排行榜");
   });
 
-  it("uses a fast checkin flow with grouped exercises and a sticky mobile submit bar", () => {
+  it("uses a fast checkin flow with grouped exercises and a normal submit card", () => {
     const page = read("app/checkin/page.tsx");
     const form = read("components/CheckinForm.tsx");
     const fields = read("components/ExerciseDetailsFields.tsx");
@@ -90,7 +90,8 @@ describe("exercise details source requirements", () => {
     expect(form).toContain("name=\"session_title\"");
     expect(form).toContain("name=\"duration_minutes\"");
     expect(form).toContain("required");
-    expect(form).toContain("checkin-sticky-submit");
+    expect(form).toContain("checkin-submit-panel");
+    expect(form).not.toContain("checkin-sticky-submit");
     expect(form).toContain("已选 <ExerciseSelectionCount /> 个动作");
     expect(fields).toContain("COMMON_EXERCISES");
     expect(fields).toContain("常用动作");
@@ -101,7 +102,8 @@ describe("exercise details source requirements", () => {
     expect(fields).toContain("选择动作后自动识别训练部位");
     expect(action).toContain("请填写训练时长");
     expect(action).toContain("请至少填写一项动作计数");
-    expect(css).toContain(".checkin-sticky-submit");
+    expect(css).toContain(".checkin-submit-panel");
+    expect(css).not.toContain(".checkin-sticky-submit");
     expect(css).toContain("env(safe-area-inset-bottom)");
   });
 });
