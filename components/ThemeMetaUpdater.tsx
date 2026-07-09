@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { getThemeByColor } from "@/lib/themes";
+import { getThemeByColor, getThemeCssVariableRecord, themeStorageKey } from "@/lib/themes";
 import type { ThemeColor } from "@/types/database";
 
 type ThemeMetaUpdaterProps = {
@@ -23,10 +23,15 @@ function upsertMeta(name: string, content: string) {
 export function ThemeMetaUpdater({ themeColor }: ThemeMetaUpdaterProps) {
   useEffect(() => {
     const theme = getThemeByColor(themeColor);
+    const variables = getThemeCssVariableRecord(theme.value);
 
+    Object.entries(variables).forEach(([name, value]) => {
+      document.documentElement.style.setProperty(name, value);
+    });
     upsertMeta("theme-color", theme.primary);
     upsertMeta("msapplication-TileColor", theme.primary);
     document.documentElement.style.setProperty("--app-status-bar-color", theme.primary);
+    window.localStorage.setItem(themeStorageKey, theme.value);
   }, [themeColor]);
 
   return null;

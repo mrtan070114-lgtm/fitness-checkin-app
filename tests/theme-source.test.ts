@@ -51,6 +51,11 @@ describe("theme color source requirements", () => {
   it("applies theme variables through the user shell and global css", () => {
     expect(read("components/UserShell.tsx")).toContain("getThemeCssVariables");
     expect(read("components/UserShell.tsx")).toContain("style={getThemeCssVariables(profile.theme_color)}");
+    expect(read("components/ThemeMetaUpdater.tsx")).toContain("getThemeCssVariableRecord");
+    expect(read("components/ThemeMetaUpdater.tsx")).toContain("document.documentElement.style.setProperty");
+    expect(read("components/ThemeMetaUpdater.tsx")).toContain("window.localStorage.setItem(themeStorageKey");
+    expect(read("app/layout.tsx")).toContain("getThemeBootstrapScript");
+    expect(read("app/layout.tsx")).toContain("dangerouslySetInnerHTML");
 
     const css = read("app/globals.css");
     expect(css).toContain("--color-primary");

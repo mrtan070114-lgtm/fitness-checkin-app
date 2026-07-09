@@ -90,6 +90,7 @@ export const themes: Record<ThemeColor, AppTheme> = {
 };
 
 export const themeOptions = Object.values(themes);
+export const themeStorageKey = "fitness-checkin-theme-color";
 
 export function isThemeColor(value: unknown): value is ThemeColor {
   return typeof value === "string" && value in themes;
@@ -100,6 +101,10 @@ export function getThemeByColor(themeColor: string | null | undefined) {
 }
 
 export function getThemeCssVariables(themeColor: string | null | undefined) {
+  return getThemeCssVariableRecord(themeColor) as CSSProperties;
+}
+
+export function getThemeCssVariableRecord(themeColor: string | null | undefined) {
   const theme = getThemeByColor(themeColor);
 
   return {
@@ -111,5 +116,36 @@ export function getThemeCssVariables(themeColor: string | null | undefined) {
     "--color-nav-active-bg": theme.navActiveBg,
     "--color-nav-active-text": theme.navActiveText,
     "--color-accent-border": theme.accentBorder
-  } as CSSProperties;
+  };
+}
+
+export function getThemeBootstrapScript() {
+  const themeVariableMap = Object.fromEntries(
+    Object.keys(themes).map((themeColor) => [
+      themeColor,
+      getThemeCssVariableRecord(themeColor)
+    ])
+  );
+  const statusBarColorMap = Object.fromEntries(
+    Object.values(themes).map((theme) => [theme.value, theme.primary])
+  );
+
+  return `
+    (function () {
+      try {
+        var themeColor = window.localStorage.getItem(${JSON.stringify(themeStorageKey)});
+        var themeVariables = ${JSON.stringify(themeVariableMap)};
+        var statusBarColors = ${JSON.stringify(statusBarColorMap)};
+        var variables = themeVariables[themeColor];
+
+        if (!variables) return;
+
+        Object.keys(variables).forEach(function (name) {
+          document.documentElement.style.setProperty(name, variables[name]);
+        });
+        document.documentElement.style.setProperty("--app-status-bar-color", statusBarColors[themeColor]);
+      } catch (error) {
+      }
+    })();
+  `;
 }
