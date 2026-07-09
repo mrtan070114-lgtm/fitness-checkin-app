@@ -5,10 +5,10 @@ export const RECORD_LIST_LIMIT = 20;
 export const DASHBOARD_ACTIVITY_LIMIT = 500;
 
 export const RECORD_SUMMARY_COLUMNS =
-  "id,user_id,checkin_date,session_title,training_type,duration_minutes,weight,image_url,locked,created_at,updated_at";
+  "id,user_id,checkin_date,session_title,training_type,training_types,exercise_names,exercise_details,duration_minutes,weight,image_url,locked,created_at,updated_at";
 
 export const CHECKIN_ACTIVITY_COLUMNS =
-  "id,checkin_date,session_title,training_type,duration_minutes,weight,created_at";
+  "id,checkin_date,session_title,training_type,training_types,exercise_names,exercise_details,duration_minutes,weight,created_at";
 
 export type CheckinSummary = Pick<
   Checkin,
@@ -17,6 +17,9 @@ export type CheckinSummary = Pick<
   | "checkin_date"
   | "session_title"
   | "training_type"
+  | "training_types"
+  | "exercise_names"
+  | "exercise_details"
   | "duration_minutes"
   | "weight"
   | "image_url"
@@ -30,7 +33,7 @@ export type CheckinSummary = Pick<
 
 export type CheckinActivity = Pick<
   Checkin,
-  "id" | "checkin_date" | "session_title" | "training_type" | "duration_minutes" | "weight" | "created_at"
+  "id" | "checkin_date" | "session_title" | "training_type" | "training_types" | "exercise_names" | "exercise_details" | "duration_minutes" | "weight" | "created_at"
 >;
 
 type AppSupabaseClient = SupabaseClient<Database>;

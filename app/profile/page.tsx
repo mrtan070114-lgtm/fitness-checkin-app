@@ -14,12 +14,10 @@ import {
   UserPen
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { unbindPartner } from "@/app/bind/actions";
 import { requireUser } from "@/lib/auth";
 import { calculateStreak, getMonthRange, getTodayDate } from "@/lib/dates";
 import { getFriendlySupabaseError } from "@/lib/errors";
 import { fetchProfileById } from "@/lib/profiles";
-import { ConfirmSubmitButton } from "@/components/ConfirmSubmitButton";
 import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { SignOutButton } from "@/components/SignOutButton";
 import { UserShell } from "@/components/UserShell";
@@ -70,7 +68,6 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
 
   return (
     <UserShell profile={profile} title="我的" subtitle="个人中心">
-      {params.unbound ? <p className="alert success">已解除绑定。</p> : null}
       {params.profile_updated ? <p className="alert success">个人资料已更新。</p> : null}
       {typeof params.error === "string" ? <p className="alert error">{params.error}</p> : null}
       {errorMessage ? <p className="alert error">{errorMessage}</p> : null}
@@ -139,14 +136,6 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
             <Link className="secondary-button compact" href="/bind">
               管理绑定
             </Link>
-            {partnerProfile ? (
-              <form action={unbindPartner}>
-                <input name="next_path" type="hidden" value="/profile" />
-                <ConfirmSubmitButton className="danger-button compact" pendingText="解除中...">
-                  解除绑定
-                </ConfirmSubmitButton>
-              </form>
-            ) : null}
           </div>
         </div>
         <p className="muted">{partnerProfile?.email || "绑定后可以互相查看运动记录。"}</p>

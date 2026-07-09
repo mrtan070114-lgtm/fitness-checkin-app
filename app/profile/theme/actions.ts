@@ -1,9 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
-import { isThemeColor } from "@/lib/themes";
+import { isThemeColor, themeCookieName } from "@/lib/themes";
 
 function refreshThemePages() {
   revalidatePath("/dashboard");
@@ -33,6 +34,12 @@ export async function updateThemeColor(formData: FormData) {
     if (error) {
       errorMessage = error.message;
     } else {
+      const cookieStore = await cookies();
+      cookieStore.set(themeCookieName, themeColor, {
+        maxAge: 60 * 60 * 24 * 365,
+        path: "/",
+        sameSite: "lax"
+      });
       refreshThemePages();
     }
   } catch (error) {

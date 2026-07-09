@@ -91,6 +91,7 @@ export const themes: Record<ThemeColor, AppTheme> = {
 
 export const themeOptions = Object.values(themes);
 export const themeStorageKey = "fitness-checkin-theme-color";
+export const themeCookieName = "fitness_checkin_theme_color";
 
 export function isThemeColor(value: unknown): value is ThemeColor {
   return typeof value === "string" && value in themes;
@@ -133,7 +134,9 @@ export function getThemeBootstrapScript() {
   return `
     (function () {
       try {
-        var themeColor = window.localStorage.getItem(${JSON.stringify(themeStorageKey)});
+        var cookieMatch = document.cookie.match(new RegExp("(?:^|; )" + ${JSON.stringify(themeCookieName)} + "=([^;]*)"));
+        var cookieThemeColor = cookieMatch ? decodeURIComponent(cookieMatch[1]) : null;
+        var themeColor = cookieThemeColor || window.localStorage.getItem(${JSON.stringify(themeStorageKey)});
         var themeVariables = ${JSON.stringify(themeVariableMap)};
         var statusBarColors = ${JSON.stringify(statusBarColorMap)};
         var variables = themeVariables[themeColor];

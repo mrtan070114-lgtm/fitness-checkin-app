@@ -27,7 +27,7 @@ describe("multiple daily checkins source rules", () => {
   });
 
   it("updates user-facing forms and record lists for multiple entries", () => {
-    expect(read("components/CheckinForm.tsx")).toContain("本次运动名称");
+    expect(read("components/CheckinForm.tsx")).toContain("运动名称");
     expect(read("components/CheckinForm.tsx")).toContain("添加本次运动");
     expect(read("components/RecordCard.tsx")).toContain("session_title");
     expect(read("app/records/page.tsx")).toContain("fetchRecentCheckins");

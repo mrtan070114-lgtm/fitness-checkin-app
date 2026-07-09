@@ -36,12 +36,13 @@ describe("unbind partner flow", () => {
     expect(actions).toContain("unbound=1");
   });
 
-  it("shows confirmed unbind controls on bind and profile pages", () => {
+  it("shows confirmed unbind controls on the bind management page only", () => {
     expect(read("components/ConfirmSubmitButton.tsx")).toContain("window.confirm");
     expect(read("components/ConfirmSubmitButton.tsx")).toContain("确定要解除绑定吗？解除后双方将不能互相查看记录。");
     expect(read("app/bind/page.tsx")).toContain("解除绑定");
     expect(read("app/bind/page.tsx")).toContain("已解除绑定");
-    expect(read("app/profile/page.tsx")).toContain("解除绑定");
-    expect(read("app/profile/page.tsx")).toContain("unbound");
+    expect(read("app/profile/page.tsx")).toContain("管理绑定");
+    expect(read("app/profile/page.tsx")).not.toContain("解除绑定");
+    expect(read("app/profile/page.tsx")).not.toContain("unbindPartner");
   });
 });

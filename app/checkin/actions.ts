@@ -3,8 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { MOODS, TRAINING_TYPES } from "@/lib/constants";
+import { MOODS } from "@/lib/constants";
 import { getTodayDate } from "@/lib/dates";
+import { hasAnyExerciseCount, parseExerciseDetailsForm } from "@/lib/exerciseDetails";
 import { requireUser } from "@/lib/auth";
 import { isUsableImage, uploadCheckinImage } from "@/lib/uploads";
 
@@ -26,7 +27,6 @@ const nullableWeight = z.preprocess((value) => {
 
 const checkinSchema = z.object({
   session_title: nullableText,
-  training_type: z.enum(TRAINING_TYPES),
   duration_minutes: nullableInteger,
   weight: nullableWeight,
   diet: nullableText,
@@ -44,7 +44,6 @@ export async function createCheckin(formData: FormData) {
 
   const parsed = checkinSchema.safeParse({
     session_title: formData.get("session_title"),
-    training_type: formData.get("training_type"),
     duration_minutes: formData.get("duration_minutes"),
     weight: formData.get("weight"),
     diet: formData.get("diet"),
@@ -54,6 +53,28 @@ export async function createCheckin(formData: FormData) {
 
   if (!parsed.success) {
     fail("表单内容不完整或格式不正确");
+  }
+
+  if (parsed.data.duration_minutes === null) {
+    fail("请填写训练时长");
+  }
+
+  const exerciseDetails = parseExerciseDetailsForm(formData);
+
+  if (exerciseDetails.error) {
+    fail(exerciseDetails.error);
+  }
+
+  if (!exerciseDetails.exerciseNames?.length) {
+    fail("请选择训练动作");
+  }
+
+  if (!exerciseDetails.trainingTypes.length) {
+    fail("请选择自定义动作归属部位");
+  }
+
+  if (!hasAnyExerciseCount(exerciseDetails.exerciseDetails)) {
+    fail("请至少填写一项动作计数");
   }
 
   let imageUrl: string | null = null;
@@ -71,7 +92,10 @@ export async function createCheckin(formData: FormData) {
     user_id: user.id,
     checkin_date: today,
     session_title: parsed.data.session_title,
-    training_type: parsed.data.training_type,
+    training_type: exerciseDetails.trainingTypes[0],
+    training_types: exerciseDetails.trainingTypes,
+    exercise_names: exerciseDetails.exerciseNames,
+    exercise_details: exerciseDetails.exerciseDetails,
     duration_minutes: parsed.data.duration_minutes,
     weight: parsed.data.weight,
     diet: parsed.data.diet,

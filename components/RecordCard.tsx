@@ -1,6 +1,8 @@
 import { Lock } from "lucide-react";
 import { CheckinImage } from "@/components/CheckinImage";
+import { ExerciseDetailsSummary } from "@/components/ExerciseDetailsSummary";
 import { formatDisplayDate } from "@/lib/dates";
+import { formatTrainingTypes } from "@/lib/exerciseDetails";
 import type { Checkin, Profile } from "@/types/database";
 
 type RecordCardProps = {
@@ -16,6 +18,7 @@ function emptyText(value: string | number | null | undefined, suffix = "") {
 
 export function RecordCard({ record, owner, adminActions }: RecordCardProps) {
   const submittedAt = new Date(record.created_at).toLocaleString("zh-CN");
+  const exerciseNames = record.exercise_names?.length ? record.exercise_names.join("、") : "未填写";
 
   return (
     <article className="record-card">
@@ -47,8 +50,12 @@ export function RecordCard({ record, owner, adminActions }: RecordCardProps) {
           <dd>{record.session_title || "未填写"}</dd>
         </div>
         <div>
-          <dt>训练类型</dt>
-          <dd>{record.training_type}</dd>
+          <dt>训练部位</dt>
+          <dd>{formatTrainingTypes(record.training_types, record.training_type)}</dd>
+        </div>
+        <div>
+          <dt>训练动作</dt>
+          <dd>{exerciseNames}</dd>
         </div>
         <div>
           <dt>训练时长</dt>
@@ -63,6 +70,11 @@ export function RecordCard({ record, owner, adminActions }: RecordCardProps) {
           <dd>{emptyText(record.mood)}</dd>
         </div>
       </dl>
+
+      <div className="record-text">
+        <strong>训练计数</strong>
+        <ExerciseDetailsSummary details={record.exercise_details} names={record.exercise_names} />
+      </div>
 
       <div className="record-text">
         <strong>饮食情况</strong>

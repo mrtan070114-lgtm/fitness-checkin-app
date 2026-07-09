@@ -32,7 +32,9 @@ export default async function AdminCheckinsPage({ searchParams }: AdminCheckinsP
 
     if (userIds) query = query.in("user_id", userIds);
     if (date) query = query.eq("checkin_date", date);
-    if (TRAINING_TYPES.includes(trainingType as TrainingType)) query = query.eq("training_type", trainingType as TrainingType);
+    if (TRAINING_TYPES.includes(trainingType as TrainingType)) {
+      query = query.or(`training_type.eq.${trainingType},training_types.cs.{${trainingType}}`);
+    }
 
     const { data } = await query;
     records = (data || []) as Checkin[];
@@ -67,7 +69,7 @@ export default async function AdminCheckinsPage({ searchParams }: AdminCheckinsP
           <input defaultValue={date} name="date" type="date" />
         </label>
         <label>
-          训练类型
+          训练部位
           <select defaultValue={trainingType} name="training_type">
             <option value="">全部</option>
             {TRAINING_TYPES.map((type) => (

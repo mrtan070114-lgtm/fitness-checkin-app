@@ -3,9 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { MOODS, TRAINING_TYPES } from "@/lib/constants";
+import { MOODS } from "@/lib/constants";
 import { requireAdmin } from "@/lib/auth";
+import { parseExerciseDetailsForm } from "@/lib/exerciseDetails";
 import { isUsableImage, uploadCheckinImage } from "@/lib/uploads";
+import type { CheckinUpdate } from "@/types/database";
 
 const nullableText = z.preprocess((value) => {
   if (typeof value !== "string") return null;
@@ -26,7 +28,6 @@ const nullableWeight = z.preprocess((value) => {
 const updateSchema = z.object({
   id: z.string().min(1),
   session_title: nullableText,
-  training_type: z.enum(TRAINING_TYPES),
   duration_minutes: nullableInteger,
   weight: nullableWeight,
   diet: nullableText,
@@ -58,7 +59,6 @@ export async function updateCheckin(formData: FormData) {
   const parsed = updateSchema.safeParse({
     id: formData.get("id"),
     session_title: formData.get("session_title"),
-    training_type: formData.get("training_type"),
     duration_minutes: formData.get("duration_minutes"),
     weight: formData.get("weight"),
     diet: formData.get("diet"),
@@ -70,9 +70,15 @@ export async function updateCheckin(formData: FormData) {
     redirect("/admin/checkins?error=表单内容不完整或格式不正确");
   }
 
+  const exerciseDetails = parseExerciseDetailsForm(formData);
+
+  if (exerciseDetails.error) {
+    redirect(`/admin/checkins/${parsed.data.id}/edit?error=${encodeURIComponent(exerciseDetails.error)}`);
+  }
+
   const { data: current, error: currentError } = await supabase
     .from("checkins")
-    .select("id,user_id,image_url")
+    .select("id,user_id,image_url,training_type,training_types")
     .eq("id", parsed.data.id)
     .single();
 
@@ -91,19 +97,28 @@ export async function updateCheckin(formData: FormData) {
     }
   }
 
+  const updateValues: CheckinUpdate = {
+    session_title: parsed.data.session_title,
+    training_type: exerciseDetails.trainingTypes[0] || current.training_type,
+    training_types: exerciseDetails.trainingTypes,
+    exercise_names: exerciseDetails.exerciseNames,
+    exercise_details: exerciseDetails.exerciseDetails,
+    duration_minutes: parsed.data.duration_minutes,
+    weight: parsed.data.weight,
+    diet: parsed.data.diet,
+    mood: parsed.data.mood,
+    note: parsed.data.note,
+    ...(imageUrl ? { image_url: imageUrl } : {}),
+    updated_at: new Date().toISOString()
+  };
+
+  if (!exerciseDetails.exerciseNames?.length) {
+    updateValues.training_types = current.training_types;
+  }
+
   const { error } = await supabase
     .from("checkins")
-    .update({
-      session_title: parsed.data.session_title,
-      training_type: parsed.data.training_type,
-      duration_minutes: parsed.data.duration_minutes,
-      weight: parsed.data.weight,
-      diet: parsed.data.diet,
-      mood: parsed.data.mood,
-      note: parsed.data.note,
-      ...(imageUrl ? { image_url: imageUrl } : {}),
-      updated_at: new Date().toISOString()
-    })
+    .update(updateValues)
     .eq("id", parsed.data.id);
 
   if (error) {

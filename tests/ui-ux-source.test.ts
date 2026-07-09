@@ -18,10 +18,12 @@ describe("user app ui/ux source requirements", () => {
 
   it("groups the checkin form into app-like sections with the new submit copy", () => {
     const form = read("components/CheckinForm.tsx");
+    const fields = read("components/ExerciseDetailsFields.tsx");
 
-    expect(form).toContain("运动信息");
-    expect(form).toContain("身体状态");
-    expect(form).toContain("补充记录");
+    expect(fields).toContain("训练内容");
+    expect(fields).toContain("动作计数");
+    expect(form).toContain("基本信息");
+    expect(form).toContain("更多记录");
     expect(form).toContain("添加本次运动");
   });
 

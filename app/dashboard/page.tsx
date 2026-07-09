@@ -5,6 +5,7 @@ import { requireUser } from "@/lib/auth";
 import { fetchDashboardActivity, type CheckinActivity } from "@/lib/checkins";
 import { addDays, calculateStreak, formatDisplayDate, getMonthRange, getTodayDate, getWeekRange } from "@/lib/dates";
 import { getFriendlySupabaseError } from "@/lib/errors";
+import { formatExerciseDetailsCompact, formatTrainingTypes } from "@/lib/exerciseDetails";
 import { formatGoalNumber, formatWeightGoalStatus, getCompletionPercent } from "@/lib/goals";
 import { fetchProfileById } from "@/lib/profiles";
 import { ProfileAvatar } from "@/components/ProfileAvatar";
@@ -72,6 +73,8 @@ export default async function DashboardPage() {
   const todayTargetMinutes = goalRecord?.daily_minutes_target || 0;
   const todayProgressLabel = todayTargetMinutes ? `${Math.min(todayDuration, todayTargetMinutes)} / ${todayTargetMinutes}` : `${todayDuration}`;
   const targetWeightStatus = formatWeightGoalStatus(goalRecord);
+  const latestExerciseSummary = latestRecord ? formatExerciseDetailsCompact(latestRecord.exercise_details, latestRecord.exercise_names) : "未填写训练计数";
+  const latestExerciseNames = latestRecord?.exercise_names?.length ? latestRecord.exercise_names.join("、") : "未填写";
 
   return (
     <UserShell profile={profile} hideHeader>
@@ -216,12 +219,20 @@ export default async function DashboardPage() {
         {latestRecord ? (
           <dl className="latest-workout-grid">
             <div>
-              <dt>训练类型</dt>
-              <dd>{latestRecord.training_type}</dd>
+              <dt>训练部位</dt>
+              <dd>{formatTrainingTypes(latestRecord.training_types, latestRecord.training_type)}</dd>
+            </div>
+            <div>
+              <dt>训练动作</dt>
+              <dd>{latestExerciseNames}</dd>
             </div>
             <div>
               <dt>训练时长</dt>
               <dd>{latestRecord.duration_minutes ?? "未填写"}{latestRecord.duration_minutes === null ? "" : " 分钟"}</dd>
+            </div>
+            <div>
+              <dt>训练计数</dt>
+              <dd>{latestExerciseSummary}</dd>
             </div>
             <div>
               <dt>体重</dt>

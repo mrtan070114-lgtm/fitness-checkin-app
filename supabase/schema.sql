@@ -26,6 +26,9 @@ create table if not exists public.checkins (
   checkin_date date not null,
   session_title text null,
   training_type text not null check (training_type in ('腹', '胸', '背', '腿', '肩', '手臂', '有氧')),
+  training_types text[] null,
+  exercise_names text[] null,
+  exercise_details jsonb null,
   duration_minutes integer null check (duration_minutes is null or duration_minutes between 0 and 1440),
   weight numeric null check (weight is null or weight between 0 and 500),
   diet text null,
@@ -43,6 +46,7 @@ create index if not exists checkins_user_date_idx on public.checkins (user_id, c
 create index if not exists checkins_user_created_at_idx on public.checkins (user_id, created_at desc);
 create index if not exists checkins_date_idx on public.checkins (checkin_date desc);
 create index if not exists checkins_training_type_idx on public.checkins (training_type);
+create index if not exists checkins_training_types_gin_idx on public.checkins using gin (training_types);
 
 create or replace function public.set_updated_at()
 returns trigger

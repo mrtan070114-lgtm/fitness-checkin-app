@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { getThemeByColor, getThemeCssVariableRecord, themeStorageKey } from "@/lib/themes";
+import { getThemeByColor, getThemeCssVariableRecord, themeCookieName, themeStorageKey } from "@/lib/themes";
 import type { ThemeColor } from "@/types/database";
 
 type ThemeMetaUpdaterProps = {
@@ -32,6 +32,7 @@ export function ThemeMetaUpdater({ themeColor }: ThemeMetaUpdaterProps) {
     upsertMeta("msapplication-TileColor", theme.primary);
     document.documentElement.style.setProperty("--app-status-bar-color", theme.primary);
     window.localStorage.setItem(themeStorageKey, theme.value);
+    document.cookie = `${themeCookieName}=${encodeURIComponent(theme.value)}; path=/; max-age=31536000; samesite=lax`;
   }, [themeColor]);
 
   return null;

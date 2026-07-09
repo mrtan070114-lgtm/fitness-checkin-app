@@ -54,14 +54,29 @@ describe("theme color source requirements", () => {
     expect(read("components/ThemeMetaUpdater.tsx")).toContain("getThemeCssVariableRecord");
     expect(read("components/ThemeMetaUpdater.tsx")).toContain("document.documentElement.style.setProperty");
     expect(read("components/ThemeMetaUpdater.tsx")).toContain("window.localStorage.setItem(themeStorageKey");
+    expect(read("components/ThemeMetaUpdater.tsx")).toContain("document.cookie");
     expect(read("app/layout.tsx")).toContain("getThemeBootstrapScript");
     expect(read("app/layout.tsx")).toContain("dangerouslySetInnerHTML");
+    expect(read("app/layout.tsx")).toContain("style={getThemeCssVariables(themeColor)}");
+    expect(read("app/profile/theme/actions.ts")).toContain("themeCookieName");
 
     const css = read("app/globals.css");
     expect(css).toContain("--color-primary");
     expect(css).toContain("var(--color-button-bg)");
     expect(css).toContain("var(--color-nav-active-bg)");
     expect(css).toContain("var(--color-accent-border)");
+  });
+
+  it("keeps loading states themed instead of hard-coding pink styles", () => {
+    const css = read("app/globals.css");
+    const loadingStyles = css.slice(css.indexOf(".loading-card"), css.indexOf("@keyframes shimmer"));
+
+    expect(read("components/PageLoading.tsx")).toContain("loading-spinner");
+    expect(loadingStyles).toContain("var(--color-primary-dark)");
+    expect(loadingStyles).toContain("var(--color-primary)");
+    expect(loadingStyles).toContain("var(--color-primary-soft)");
+    expect(loadingStyles).toContain("var(--color-accent-border)");
+    expect(loadingStyles).not.toMatch(/#db2777|#ec4899|pink|rose|bg-pink|text-pink|border-pink/i);
   });
 
   it("adds profile entry and theme settings page", () => {

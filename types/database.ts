@@ -6,6 +6,16 @@ export type TrainingType = "腹" | "胸" | "背" | "腿" | "肩" | "手臂" | "�
 
 export type Mood = "很好" | "不错" | "一般" | "疲惫" | "低落";
 
+export type ExerciseDetail = {
+  name: string;
+  sets?: number | null;
+  reps?: number | null;
+  weight?: number | null;
+  duration_seconds?: number | null;
+  distance_km?: number | null;
+  note?: string | null;
+};
+
 export type Profile = {
   id: string;
   username: string;
@@ -25,6 +35,9 @@ export type Checkin = {
   checkin_date: string;
   session_title: string | null;
   training_type: TrainingType;
+  training_types: TrainingType[] | null;
+  exercise_names: string[] | null;
+  exercise_details: ExerciseDetail[] | null;
   duration_minutes: number | null;
   weight: number | null;
   diet: string | null;
@@ -41,6 +54,9 @@ export type CheckinInsert = {
   checkin_date: string;
   session_title?: string | null;
   training_type: TrainingType;
+  training_types?: TrainingType[] | null;
+  exercise_names?: string[] | null;
+  exercise_details?: ExerciseDetail[] | null;
   duration_minutes?: number | null;
   weight?: number | null;
   diet?: string | null;
@@ -54,7 +70,10 @@ export type CheckinUpdate = Partial<
   Pick<
     Checkin,
     | "training_type"
+    | "training_types"
     | "session_title"
+    | "exercise_names"
+    | "exercise_details"
     | "duration_minutes"
     | "weight"
     | "diet"

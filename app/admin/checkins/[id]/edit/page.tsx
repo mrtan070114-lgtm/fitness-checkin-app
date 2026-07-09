@@ -2,8 +2,9 @@ import { notFound } from "next/navigation";
 import { updateCheckin } from "@/app/admin/checkins/actions";
 import { BackButton } from "@/components/BackButton";
 import { CheckinImage } from "@/components/CheckinImage";
+import { ExerciseDetailsFields } from "@/components/ExerciseDetailsFields";
 import { requireAdmin } from "@/lib/auth";
-import { MOODS, TRAINING_TYPES } from "@/lib/constants";
+import { MOODS } from "@/lib/constants";
 import { SubmitButton } from "@/components/SubmitButton";
 import type { Checkin, Profile } from "@/types/database";
 
@@ -45,17 +46,6 @@ export default async function AdminEditCheckinPage({ params, searchParams }: Adm
           <input defaultValue={checkin.session_title || ""} maxLength={80} name="session_title" placeholder="例如 早上跑步、晚上力量训练、胸部训练" />
         </label>
 
-        <label>
-          训练类型
-          <select name="training_type" required defaultValue={checkin.training_type}>
-            {TRAINING_TYPES.map((type) => (
-              <option value={type} key={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-        </label>
-
         <div className="form-grid two">
           <label>
             训练时长（分钟）
@@ -65,6 +55,18 @@ export default async function AdminEditCheckinPage({ params, searchParams }: Adm
             今日体重（kg）
             <input defaultValue={checkin.weight ?? ""} inputMode="decimal" min="0" max="500" name="weight" step="0.1" type="number" />
           </label>
+        </div>
+
+        <div className="admin-edit-section">
+          <div className="section-heading">
+            <p className="eyebrow">训练计数</p>
+            <h2>动作明细</h2>
+          </div>
+          <ExerciseDetailsFields
+            initialDetails={checkin.exercise_details}
+            initialNames={checkin.exercise_names}
+            initialTrainingTypes={checkin.training_types}
+          />
         </div>
 
         <label>

@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { Heart, Lock, MessageCircle } from "lucide-react";
 import { CheckinImage } from "@/components/CheckinImage";
+import { ExerciseDetailsSummary } from "@/components/ExerciseDetailsSummary";
 import { formatDisplayDate } from "@/lib/dates";
+import { formatTrainingTypes } from "@/lib/exerciseDetails";
 import type { CheckinSummary } from "@/lib/checkins";
 import type { Profile } from "@/types/database";
 
@@ -40,10 +42,12 @@ export function RecordSummaryCard({ record, detailHref, owner, adminActions }: R
           </div>
 
           <div className="summary-facts">
-            <span>{record.training_type}</span>
+            <span>{formatTrainingTypes(record.training_types, record.training_type)}</span>
             <span>{emptyText(record.duration_minutes, " 分钟")}</span>
             <span>{emptyText(record.weight, " kg")}</span>
           </div>
+
+          <ExerciseDetailsSummary compact details={record.exercise_details} names={record.exercise_names} />
 
           <p className="summary-time">
             {formatDisplayDate(record.checkin_date)} · {submittedAt}

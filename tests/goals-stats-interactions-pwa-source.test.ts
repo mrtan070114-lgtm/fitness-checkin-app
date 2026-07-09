@@ -60,7 +60,7 @@ describe("goals stats interactions and pwa source requirements", () => {
     expect(dashboard).toContain("今日时长");
     expect(dashboard).toContain("目标体重");
     expect(stats).toContain("WeightTrendChart");
-    expect(stats).toContain("训练类型占比");
+    expect(stats).toContain("训练部位占比");
     expect(stats).toContain("记录更多体重后即可生成趋势图");
   });
 

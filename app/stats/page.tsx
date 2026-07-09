@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { addDays, calculateStreak, getMonthRange, getTodayDate, getWeekRange } from "@/lib/dates";
+import { getExerciseStats, normalizeTrainingTypes } from "@/lib/exerciseDetails";
 import { WeightTrendChart } from "@/components/WeightTrendChart";
 import { UserShell } from "@/components/UserShell";
 import type { Checkin, TrainingType } from "@/types/database";
@@ -52,13 +53,13 @@ export default async function StatsPage() {
 
   const { data } = await supabase
     .from("checkins")
-    .select("checkin_date,training_type,duration_minutes,weight,created_at")
+    .select("checkin_date,training_type,training_types,exercise_names,exercise_details,duration_minutes,weight,created_at")
     .eq("user_id", user.id)
     .gte("checkin_date", since)
     .lte("checkin_date", today)
     .order("created_at", { ascending: true });
 
-  const records = (data || []) as Pick<Checkin, "checkin_date" | "training_type" | "duration_minutes" | "weight" | "created_at">[];
+  const records = (data || []) as Pick<Checkin, "checkin_date" | "training_type" | "training_types" | "exercise_names" | "exercise_details" | "duration_minutes" | "weight" | "created_at">[];
   const weekRecords = records.filter((record) => record.checkin_date >= weekRange.start && record.checkin_date <= weekRange.end);
   const monthRecords = records.filter((record) => record.checkin_date >= monthRange.start && record.checkin_date <= monthRange.end);
   const totalMinutes = records.reduce((total, record) => total + (record.duration_minutes || 0), 0);
@@ -68,9 +69,10 @@ export default async function StatsPage() {
   const weights = weightPoints.map((point) => point.weight);
   const typeCounts = TRAINING_ORDER.map((type) => ({
     type,
-    count: records.filter((record) => record.training_type === type).length
+    count: records.filter((record) => normalizeTrainingTypes(record.training_types, record.training_type).includes(type)).length
   })).filter((item) => item.count > 0);
   const maxTypeCount = Math.max(1, ...typeCounts.map((item) => item.count));
+  const exerciseStats = getExerciseStats(records);
 
   return (
     <UserShell profile={profile} title="数据统计" subtitle="体重趋势和训练表现" showBackButton>
@@ -99,7 +101,7 @@ export default async function StatsPage() {
       </section>
 
       <section className="info-card rich-card">
-        <p className="eyebrow">训练类型占比</p>
+        <p className="eyebrow">训练部位占比</p>
         {typeCounts.length ? (
           <div className="progress-list">
             {typeCounts.map((item) => (
@@ -110,7 +112,34 @@ export default async function StatsPage() {
             ))}
           </div>
         ) : (
-          <p className="muted">添加运动记录后，这里会显示训练类型占比。</p>
+          <p className="muted">添加运动记录后，这里会显示训练部位占比。</p>
+        )}
+      </section>
+
+      <section className="info-card rich-card">
+        <p className="eyebrow">训练计数统计</p>
+        <div className="metric-grid">
+          <article className="mini-stat"><span>总组数</span><strong>{exerciseStats.totalSets} 组</strong></article>
+          <article className="mini-stat"><span>总次数</span><strong>{exerciseStats.totalReps} 次</strong></article>
+          <article className="mini-stat"><span>总训练动作数</span><strong>{exerciseStats.totalActions} 个</strong></article>
+          <article className="mini-stat"><span>记录覆盖</span><strong>{records.filter((record) => record.exercise_details?.length).length} 次</strong></article>
+        </div>
+        <div className="section-heading">
+          <h2>动作排行榜</h2>
+        </div>
+        {exerciseStats.ranking.length ? (
+          <div className="exercise-ranking-list">
+            {exerciseStats.ranking.slice(0, 8).map((item) => (
+              <div className="exercise-ranking-item" key={item.name}>
+                <span>{item.name}</span>
+                <strong>
+                  {item.reps ? `累计 ${item.reps} 次` : item.seconds ? `累计 ${item.seconds} 秒` : `出现 ${item.count} 次`}
+                </strong>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="muted">填写训练计数后，这里会显示动作排行榜。</p>
         )}
       </section>
     </UserShell>
