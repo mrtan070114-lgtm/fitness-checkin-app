@@ -1,5 +1,13 @@
-import { PageLoading } from "@/components/PageLoading";
+import { AppPageLoading } from "@/components/AppPageLoading";
 
 export default function StatsLoading() {
-  return <PageLoading title="数据统计" subtitle="正在生成趋势图" />;
+  return (
+    <AppPageLoading
+      section="数据统计"
+      title="正在生成训练统计"
+      description="正在分析你的运动数据"
+      variant="stats"
+      showBottomNav
+    />
+  );
 }

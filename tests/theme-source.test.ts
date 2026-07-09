@@ -52,7 +52,10 @@ describe("theme color source requirements", () => {
     expect(read("components/UserShell.tsx")).toContain("getThemeCssVariables");
     expect(read("components/UserShell.tsx")).toContain("style={getThemeCssVariables(profile.theme_color)}");
     expect(read("components/ThemeMetaUpdater.tsx")).toContain("getThemeCssVariableRecord");
+    expect(read("components/ThemeMetaUpdater.tsx")).toContain("readStoredThemeColor");
     expect(read("components/ThemeMetaUpdater.tsx")).toContain("document.documentElement.style.setProperty");
+    expect(read("components/ThemeMetaUpdater.tsx")).toContain('upsertMeta("theme-color", theme.primary)');
+    expect(read("components/ThemeMetaUpdater.tsx")).toContain('document.documentElement.style.setProperty("--app-status-bar-color", theme.primary)');
     expect(read("components/ThemeMetaUpdater.tsx")).toContain("window.localStorage.setItem(themeStorageKey");
     expect(read("components/ThemeMetaUpdater.tsx")).toContain("document.cookie");
     expect(read("app/profile/theme/actions.ts")).toContain("themeCookieName");
@@ -79,14 +82,38 @@ describe("theme color source requirements", () => {
 
   it("keeps loading states themed instead of hard-coding pink styles", () => {
     const css = read("app/globals.css");
-    const loadingStyles = css.slice(css.indexOf(".loading-card"), css.indexOf("@keyframes shimmer"));
+    const loadingStyles = css.slice(css.indexOf(".app-page-loading"), css.indexOf("@keyframes app-loading-shimmer"));
 
-    expect(read("components/PageLoading.tsx")).toContain("loading-spinner");
+    expect(read("components/AppPageLoading.tsx")).toContain("ThemeMetaUpdater");
+    expect(read("components/AppPageLoading.tsx")).toContain("app-loading-spinner");
     expect(loadingStyles).toContain("var(--color-primary-dark)");
     expect(loadingStyles).toContain("var(--color-primary)");
     expect(loadingStyles).toContain("var(--color-primary-soft)");
-    expect(loadingStyles).toContain("var(--color-accent-border)");
+    expect(loadingStyles).toContain("var(--color-primary-very-soft)");
+    expect(loadingStyles).toContain("var(--color-border)");
+    expect(loadingStyles).toContain("var(--color-card)");
     expect(loadingStyles).not.toMatch(/#db2777|#ec4899|pink|rose|bg-pink|text-pink|border-pink/i);
+  });
+
+  it("does not hard-code green as the mobile browser theme color", () => {
+    const layout = read("app/layout.tsx");
+    const manifest = read("public/manifest.json");
+    const css = read("app/globals.css");
+    const themes = read("lib/themes.ts");
+    const updater = read("components/ThemeMetaUpdater.tsx");
+
+    expect(layout).toContain('themeColor: "#f7faf5"');
+    expect(layout).not.toContain('themeColor: "#126b42"');
+    expect(manifest).toContain('"theme_color": "#f7faf5"');
+    expect(manifest).toContain('"background_color": "#f7faf5"');
+    expect(manifest).not.toContain('"theme_color": "#126b42"');
+    expect(css).toContain("--app-status-bar-color: #f7faf5");
+    expect(css).not.toContain("--app-status-bar-color: #126b42");
+
+    for (const primary of ['primary: "#126b42"', 'primary: "#db2777"', 'primary: "#2563eb"', 'primary: "#7c3aed"']) {
+      expect(themes).toContain(primary);
+    }
+    expect(updater).toContain('upsertMeta("theme-color", theme.primary)');
   });
 
   it("adds profile entry and theme settings page", () => {

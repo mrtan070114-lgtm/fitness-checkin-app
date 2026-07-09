@@ -18,13 +18,16 @@
   --bottom-nav-space: 96px;
   --color-primary: #126b42;
   --color-primary-soft: #edf7f0;
+  --color-primary-very-soft: #f7faf5;
   --color-primary-dark: #0b5433;
   --color-button-bg: #126b42;
   --color-button-text: #ffffff;
   --color-nav-active-bg: #eef8f1;
   --color-nav-active-text: #0b5433;
   --color-accent-border: rgba(18, 107, 66, 0.24);
-  --app-status-bar-color: #126b42;
+  --color-border: rgba(18, 107, 66, 0.24);
+  --color-card: rgba(255, 255, 255, 0.96);
+  --app-status-bar-color: #f7faf5;
 }
 
 * {
@@ -2622,59 +2625,237 @@ textarea:focus {
   opacity: 0.86;
 }
 
-.loading-card {
+.app-page-loading {
+  background: linear-gradient(180deg, var(--color-primary-very-soft) 0%, var(--color-primary-soft) 100%);
+}
+
+.app-loading-shell {
+  padding-bottom: calc(18px + env(safe-area-inset-bottom));
+}
+
+.app-page-loading.has-bottom-nav .app-loading-shell {
+  padding-bottom: calc(var(--bottom-nav-space) + env(safe-area-inset-bottom));
+}
+
+.app-page-loading-admin .app-loading-shell {
+  width: min(100%, 1080px);
+}
+
+.app-loading-content {
+  padding-top: 2px;
+}
+
+.app-loading-hero,
+.app-loading-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-card);
+  box-shadow: var(--shadow);
+}
+
+.app-loading-hero {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  min-height: 104px;
+  min-height: 118px;
   padding: 18px;
-  border: 1px solid var(--color-accent-border);
-  border-radius: var(--radius-lg);
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: var(--shadow);
 }
 
-.loading-card .eyebrow {
+.app-loading-hero h1 {
+  margin: 5px 0 6px;
+  font-size: 22px;
+  line-height: 1.24;
+  letter-spacing: 0;
+}
+
+.app-loading-hero p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.app-loading-section {
   color: var(--color-primary-dark);
 }
 
-.loading-card h2 {
-  margin: 0;
-  font-size: 20px;
-}
-
-.loading-spinner {
-  width: 28px;
-  height: 28px;
+.app-loading-spinner {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
   border: 3px solid var(--color-primary-soft);
   border-top-color: var(--color-primary);
   border-radius: 999px;
-  animation: spin 0.75s linear infinite;
+  animation: app-loading-spin 0.75s linear infinite;
 }
 
-.loading-grid {
+.app-loading-skeleton {
   display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.app-loading-card {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px;
+}
+
+.app-loading-card.compact {
+  min-height: 94px;
+}
+
+.app-loading-card.feature {
+  min-height: 138px;
+}
+
+.app-loading-card.form {
+  min-height: 360px;
+}
+
+.app-loading-card.profile {
+  min-height: 116px;
+}
+
+.app-loading-card.record {
+  min-height: 126px;
+}
+
+.app-loading-card.chart {
+  min-height: 240px;
+}
+
+.app-loading-card.table {
+  min-height: 300px;
+}
+
+.app-loading-card.settings {
+  grid-template-columns: 36px minmax(0, 1fr);
+  align-items: center;
+  min-height: 62px;
+}
+
+.app-loading-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
 
-.loading-grid span {
-  display: block;
-  height: 82px;
-  border: 1px solid var(--color-accent-border);
-  border-radius: var(--radius-lg);
-  background: linear-gradient(90deg, var(--color-primary-soft) 0%, rgba(255, 255, 255, 0.85) 50%, var(--color-primary-soft) 100%);
-  background-size: 220% 100%;
-  animation: shimmer 1.2s ease-in-out infinite;
+.app-page-loading-stats .app-loading-metric-grid,
+.app-page-loading-admin .app-loading-metric-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-@keyframes spin {
+.app-loading-list {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.app-loading-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.app-loading-column {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 8px;
+}
+
+.app-loading-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.app-loading-block {
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--color-primary-soft) 0%, var(--color-card) 50%, var(--color-primary-soft) 100%);
+  background-size: 220% 100%;
+  animation: app-loading-shimmer 1.2s ease-in-out infinite;
+}
+
+.app-loading-block.line {
+  height: 13px;
+}
+
+.app-loading-block.short {
+  width: 36%;
+}
+
+.app-loading-block.medium {
+  width: 62%;
+}
+
+.app-loading-block.wide {
+  width: 100%;
+}
+
+.app-loading-block.pill {
+  height: 32px;
+}
+
+.app-loading-block.chip {
+  width: 88px;
+  height: 36px;
+}
+
+.app-loading-block.input {
+  width: 100%;
+  height: 48px;
+  border-radius: var(--radius-md);
+}
+
+.app-loading-block.button {
+  width: 100%;
+  height: 50px;
+  border-radius: 999px;
+  background: var(--color-primary);
+}
+
+.app-loading-block.avatar {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+}
+
+.app-loading-block.avatar.large {
+  width: 58px;
+  height: 58px;
+}
+
+.app-loading-block.icon {
+  width: 36px;
+  height: 36px;
+}
+
+.app-loading-block.chart-area {
+  width: 100%;
+  height: 170px;
+  border-radius: var(--radius-md);
+}
+
+.app-loading-block.table-row {
+  width: 100%;
+  height: 42px;
+  border-radius: var(--radius-md);
+}
+
+@keyframes app-loading-spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-@keyframes shimmer {
+@keyframes app-loading-shimmer {
   0% {
     background-position: 100% 0;
   }

@@ -1,5 +1,5 @@
-import { PageLoading } from "@/components/PageLoading";
+import { AppPageLoading } from "@/components/AppPageLoading";
 
 export default function PwaLoading() {
-  return <PageLoading title="添加到手机桌面" subtitle="正在加载安装说明" />;
+  return <AppPageLoading section="加载中" title="正在加载页面" description="请稍等一下" variant="default" showBottomNav />;
 }

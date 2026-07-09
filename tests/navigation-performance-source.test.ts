@@ -49,7 +49,7 @@ describe("navigation performance source rules", () => {
       "app/profile/theme/loading.tsx"
     ]) {
       expect(existsSync(join(root, path))).toBe(true);
-      expect(read(path)).toContain("PageLoading");
+      expect(read(path)).toContain("AppPageLoading");
     }
   });
 
