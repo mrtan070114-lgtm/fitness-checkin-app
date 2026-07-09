@@ -10,6 +10,13 @@ export function getWeightGap(goal: Pick<Goal, "current_weight" | "target_weight"
   return Number((goal.current_weight - goal.target_weight).toFixed(1));
 }
 
+export function formatWeightGoalStatus(goal: Pick<Goal, "current_weight" | "target_weight"> | null | undefined) {
+  const gap = getWeightGap(goal);
+  if (gap === null) return "体重数据不足";
+  if (gap <= 0) return "已达到目标";
+  return `还差 ${gap} kg`;
+}
+
 export function getCompletionPercent(done: number, target: number | null | undefined) {
   if (!target || target <= 0) return 0;
   return Math.min(100, Math.round((done / target) * 100));

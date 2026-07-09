@@ -79,7 +79,7 @@ export default async function GoalsPage({ searchParams }: GoalsPageProps) {
         )}
       </section>
 
-      <form action={saveGoal} className="checkin-form-stack">
+      <form action={saveGoal} className="checkin-form-stack goal-form-stack">
         <section className="form-card form-section">
           <div className="section-heading">
             <p className="eyebrow">{currentGoal ? "编辑目标" : "设置目标"}</p>
@@ -94,7 +94,7 @@ export default async function GoalsPage({ searchParams }: GoalsPageProps) {
           </div>
           <label>目标备注<textarea defaultValue={currentGoal?.goal_note ?? ""} name="goal_note" placeholder="写下目标原因或阶段计划" rows={4} /></label>
         </section>
-        <section className="submit-panel">
+        <section className="submit-panel goal-submit-panel">
           <SubmitButton pendingText="保存中...">{currentGoal ? "保存目标" : "设置目标"}</SubmitButton>
         </section>
       </form>

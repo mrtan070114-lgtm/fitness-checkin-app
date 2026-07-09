@@ -5,7 +5,7 @@ import { requireUser } from "@/lib/auth";
 import { fetchDashboardActivity, type CheckinActivity } from "@/lib/checkins";
 import { addDays, calculateStreak, formatDisplayDate, getMonthRange, getTodayDate, getWeekRange } from "@/lib/dates";
 import { getFriendlySupabaseError } from "@/lib/errors";
-import { getCompletionPercent } from "@/lib/goals";
+import { formatGoalNumber, formatWeightGoalStatus, getCompletionPercent } from "@/lib/goals";
 import { fetchProfileById } from "@/lib/profiles";
 import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { UserShell } from "@/components/UserShell";
@@ -15,12 +15,6 @@ function formatWeekday(dateString: string) {
   const [year, month, day] = dateString.split("-").map(Number);
   const weekday = new Date(year, month - 1, day).getDay();
   return ["周日", "周一", "周二", "周三", "周四", "周五", "周六"][weekday];
-}
-
-function formatTargetWeightGap(value: number | null) {
-  if (value === null) return "体重数据不足";
-  if (value === 0) return "已达到目标";
-  return `与目标差 ${Math.abs(value)} kg`;
 }
 
 export default async function DashboardPage() {
@@ -77,10 +71,7 @@ export default async function DashboardPage() {
   const dayGoalPercent = getCompletionPercent(todayDuration, goalRecord?.daily_minutes_target);
   const todayTargetMinutes = goalRecord?.daily_minutes_target || 0;
   const todayProgressLabel = todayTargetMinutes ? `${Math.min(todayDuration, todayTargetMinutes)} / ${todayTargetMinutes}` : `${todayDuration}`;
-  const latestWeight = activity.find((record) => record.weight !== null)?.weight ?? goalRecord?.current_weight ?? null;
-  const targetWeightGap = latestWeight !== null && goalRecord?.target_weight !== null && goalRecord?.target_weight !== undefined
-    ? Number((Number(latestWeight) - Number(goalRecord.target_weight)).toFixed(1))
-    : null;
+  const targetWeightStatus = formatWeightGoalStatus(goalRecord);
 
   return (
     <UserShell profile={profile} hideHeader>
@@ -197,9 +188,12 @@ export default async function DashboardPage() {
             </div>
             <div className="goal-weight-pill">
               <Target size={18} aria-hidden="true" />
-              <div>
+              <div className="goal-weight-copy">
                 <span>目标体重</span>
-                <strong>{formatTargetWeightGap(targetWeightGap)}</strong>
+                <strong>{targetWeightStatus}</strong>
+                <small>
+                  当前体重：{formatGoalNumber(goalRecord.current_weight, " kg")} · 目标体重：{formatGoalNumber(goalRecord.target_weight, " kg")}
+                </small>
               </div>
             </div>
           </div>

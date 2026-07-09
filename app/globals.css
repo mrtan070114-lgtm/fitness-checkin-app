@@ -33,12 +33,15 @@
 
 html {
   width: 100%;
+  max-width: 100%;
   min-height: 100%;
+  overflow-x: hidden;
   background: var(--app-status-bar-color);
 }
 
 body {
   width: 100%;
+  max-width: 100%;
   min-height: 100vh;
   min-height: 100dvh;
   margin: 0;
@@ -60,6 +63,8 @@ button,
 input,
 select,
 textarea {
+  box-sizing: border-box;
+  max-width: 100%;
   font: inherit;
 }
 
@@ -79,6 +84,8 @@ img {
 .user-shell {
   position: fixed;
   inset: 0;
+  width: 100%;
+  max-width: 100%;
   min-height: 100dvh;
   overflow: hidden;
   background: linear-gradient(180deg, #f7faf5 0%, var(--bg) 48%, #e7f0ea 100%);
@@ -86,8 +93,10 @@ img {
 
 .page-shell {
   width: min(100%, 720px);
+  max-width: 100%;
   height: 100dvh;
   margin: 0 auto;
+  overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior-y: contain;
   padding-right: 16px;
@@ -104,6 +113,9 @@ img {
 .content-stack,
 .admin-stack {
   display: grid;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   gap: 18px;
 }
 
@@ -128,6 +140,7 @@ img {
   border-radius: var(--radius-lg);
   background: rgba(255, 255, 255, 0.96);
   box-shadow: var(--shadow);
+  max-width: 100%;
 }
 
 .app-header {
@@ -706,6 +719,24 @@ img {
   color: var(--color-primary);
 }
 
+.goal-weight-pill > div,
+.goal-weight-copy {
+  min-width: 0;
+}
+
+.goal-weight-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.goal-weight-copy small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
 .latest-workout-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -870,6 +901,7 @@ input,
 textarea,
 select,
 button {
+  max-width: 100%;
   font-size: 16px;
 }
 
@@ -901,11 +933,17 @@ button {
 
 .checkin-form-stack {
   display: grid;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   gap: 16px;
 }
 
 .form-card {
   display: grid;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   gap: 16px;
   padding: 18px;
 }
@@ -914,6 +952,9 @@ button {
 .checkin-form-stack label,
 .filter-bar label {
   display: grid;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   gap: 8px;
   color: var(--muted);
   font-size: 14px;
@@ -923,7 +964,10 @@ button {
 input,
 select,
 textarea {
+  display: block;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background: #fff;
@@ -936,6 +980,12 @@ textarea {
   resize: vertical;
 }
 
+input[type="date"] {
+  min-width: 0;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
 input:focus,
 select:focus,
 textarea:focus {
@@ -945,7 +995,15 @@ textarea:focus {
 
 .form-grid {
   display: grid;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   gap: 12px;
+}
+
+.form-grid > * {
+  max-width: 100%;
+  min-width: 0;
 }
 
 .form-section h2 {
@@ -1095,6 +1153,9 @@ textarea:focus {
 .submit-panel,
 .success-panel {
   display: grid;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   gap: 12px;
   padding: 16px;
 }
@@ -1102,6 +1163,11 @@ textarea:focus {
 .submit-panel .primary-button,
 .submit-panel button {
   width: 100%;
+  max-width: 100%;
+}
+
+.goal-submit-panel {
+  padding-bottom: calc(88px + env(safe-area-inset-bottom));
 }
 
 .success-actions {
