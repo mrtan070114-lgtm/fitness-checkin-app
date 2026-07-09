@@ -33,11 +33,15 @@ describe("mobile app shell layout", () => {
     expect(css).toMatch(/\.bottom-nav-item\.active\s*\{[^}]*background:\s*var\(--color-nav-active-bg\)/s);
   });
 
-  it("sets mobile theme color without disabling user zoom", () => {
+  it("sets mobile viewport for app-like safe-area rendering with zoom disabled", () => {
     const layout = read("app/layout.tsx");
 
     expect(layout).toContain("themeColor");
-    expect(layout).not.toMatch(/userScalable:\s*false|maximumScale:\s*1/);
+    expect(layout).toMatch(/width:\s*"device-width"/);
+    expect(layout).toMatch(/initialScale:\s*1/);
+    expect(layout).toMatch(/maximumScale:\s*1/);
+    expect(layout).toMatch(/userScalable:\s*false/);
+    expect(layout).toMatch(/viewportFit:\s*"cover"/);
     expect(read("app/globals.css")).not.toMatch(/user-scalable\s*=\s*no|maximum-scale\s*=\s*1/i);
   });
 });

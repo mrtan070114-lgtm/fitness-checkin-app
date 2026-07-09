@@ -92,6 +92,8 @@ describe("goals stats interactions and pwa source requirements", () => {
     expect(manifest).toContain('"display": "standalone"');
     expect(layout).toContain('manifest: "/manifest.json"');
     expect(layout).toContain("appleWebApp");
-    expect(layout).not.toMatch(/userScalable:\s*false|maximumScale:\s*1/);
+    expect(layout).toMatch(/maximumScale:\s*1/);
+    expect(layout).toMatch(/userScalable:\s*false/);
+    expect(layout).toMatch(/viewportFit:\s*"cover"/);
   });
 });
