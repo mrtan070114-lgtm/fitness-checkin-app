@@ -1,6 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { cookies } from "next/headers";
-import { getThemeBootstrapScript, getThemeCssVariables, themeCookieName } from "@/lib/themes";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -32,16 +30,10 @@ export const viewport: Viewport = {
   themeColor: "#126b42"
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const cookieStore = await cookies();
-  const themeColor = cookieStore.get(themeCookieName)?.value;
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="zh-CN" style={getThemeCssVariables(themeColor)}>
-      <body>
-        <script dangerouslySetInnerHTML={{ __html: getThemeBootstrapScript() }} />
-        {children}
-      </body>
+    <html lang="zh-CN">
+      <body>{children}</body>
     </html>
   );
 }

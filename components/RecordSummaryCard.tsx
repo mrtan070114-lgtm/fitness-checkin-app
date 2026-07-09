@@ -2,8 +2,7 @@ import Link from "next/link";
 import { Heart, Lock, MessageCircle } from "lucide-react";
 import { CheckinImage } from "@/components/CheckinImage";
 import { ExerciseDetailsSummary } from "@/components/ExerciseDetailsSummary";
-import { formatDisplayDate } from "@/lib/dates";
-import { formatTrainingTypes } from "@/lib/exerciseDetails";
+import { formatDateTimeCN, formatDisplayDate } from "@/lib/dates";
 import type { CheckinSummary } from "@/lib/checkins";
 import type { Profile } from "@/types/database";
 
@@ -20,7 +19,13 @@ function emptyText(value: string | number | null | undefined, suffix = "") {
 }
 
 export function RecordSummaryCard({ record, detailHref, owner, adminActions }: RecordSummaryCardProps) {
-  const submittedAt = new Date(record.created_at).toLocaleString("zh-CN");
+  const submittedAt = formatDateTimeCN(record.created_at);
+  const trainingTypes = record.training_types?.length
+    ? record.training_types
+    : record.training_type
+      ? [record.training_type]
+      : [];
+  const exerciseNames = record.exercise_names?.length ? record.exercise_names.join("、") : "未填写动作";
   const likeCount = record.likeCount || 0;
   const commentCount = record.commentCount || 0;
 
@@ -42,7 +47,8 @@ export function RecordSummaryCard({ record, detailHref, owner, adminActions }: R
           </div>
 
           <div className="summary-facts">
-            <span>{formatTrainingTypes(record.training_types, record.training_type)}</span>
+            <span>{trainingTypes.length ? trainingTypes.join("、") : "未填写"}</span>
+            <span>{exerciseNames}</span>
             <span>{emptyText(record.duration_minutes, " 分钟")}</span>
             <span>{emptyText(record.weight, " kg")}</span>
           </div>

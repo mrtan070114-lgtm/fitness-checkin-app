@@ -2,6 +2,7 @@ import { Heart, MessageCircle, Trash2 } from "lucide-react";
 import { addCheckinComment, deleteCheckinComment, toggleCheckinLike } from "@/app/records/actions";
 import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { SubmitButton } from "@/components/SubmitButton";
+import { formatDateTimeCN } from "@/lib/dates";
 import type { CommentWithAuthor } from "@/lib/interactions";
 import type { Profile } from "@/types/database";
 
@@ -75,7 +76,7 @@ export function CheckinInteractions({
                 <div>
                   <div className="comment-title-row">
                     <strong>{author.username}</strong>
-                    <span>{new Date(comment.created_at).toLocaleString("zh-CN")}</span>
+                    <span>{formatDateTimeCN(comment.created_at)}</span>
                   </div>
                   <p>{comment.content}</p>
                   {allowDeleteAll || comment.user_id === currentUserId ? (

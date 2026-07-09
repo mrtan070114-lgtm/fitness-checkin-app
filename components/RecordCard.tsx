@@ -1,8 +1,7 @@
 import { Lock } from "lucide-react";
 import { CheckinImage } from "@/components/CheckinImage";
 import { ExerciseDetailsSummary } from "@/components/ExerciseDetailsSummary";
-import { formatDisplayDate } from "@/lib/dates";
-import { formatTrainingTypes } from "@/lib/exerciseDetails";
+import { formatDateTimeCN, formatDisplayDate } from "@/lib/dates";
 import type { Checkin, Profile } from "@/types/database";
 
 type RecordCardProps = {
@@ -17,8 +16,13 @@ function emptyText(value: string | number | null | undefined, suffix = "") {
 }
 
 export function RecordCard({ record, owner, adminActions }: RecordCardProps) {
-  const submittedAt = new Date(record.created_at).toLocaleString("zh-CN");
-  const exerciseNames = record.exercise_names?.length ? record.exercise_names.join("、") : "未填写";
+  const submittedAt = formatDateTimeCN(record.created_at);
+  const trainingTypes = record.training_types?.length
+    ? record.training_types
+    : record.training_type
+      ? [record.training_type]
+      : [];
+  const exerciseNames = record.exercise_names?.length ? record.exercise_names.join("、") : "未填写动作";
 
   return (
     <article className="record-card">
@@ -51,7 +55,7 @@ export function RecordCard({ record, owner, adminActions }: RecordCardProps) {
         </div>
         <div>
           <dt>训练部位</dt>
-          <dd>{formatTrainingTypes(record.training_types, record.training_type)}</dd>
+          <dd>{trainingTypes.length ? trainingTypes.join("、") : "未填写"}</dd>
         </div>
         <div>
           <dt>训练动作</dt>

@@ -37,7 +37,7 @@ export default async function PartnerPage() {
     );
   }
 
-  const [{ data: partner, error: partnerError }, { data: records, error: recordsError }, { data: todayRecords, error: todayError }] = await Promise.all([
+  const [partnerResult, recordsResult, todayResult] = await Promise.all([
     fetchProfileById(supabase, profile.bound_user_id),
     fetchRecentCheckins(supabase, profile.bound_user_id, RECORD_LIST_LIMIT),
     supabase
@@ -48,9 +48,23 @@ export default async function PartnerPage() {
       .order("created_at", { ascending: false })
   ]);
 
+  const { data: partner, error: partnerError } = partnerResult;
+  const { data: records, error: recordsError } = recordsResult;
+  const { data: todayRecords, error: todayError } = todayResult;
+
+  if (recordsResult.compatibilityError) {
+    console.error("load partner records failed", recordsResult.compatibilityError);
+  }
+
+  if (recordsError) {
+    console.error("load partner records failed", recordsError);
+  }
+
   const partnerProfile = partner as Profile | null;
-  const interactionCounts = await fetchInteractionCounts(supabase, (records || []).map((record) => record.id));
-  const errorMessage = getFriendlySupabaseError(partnerError || recordsError || todayError);
+  const partnerRecords = (records || []) as CheckinSummary[];
+  const interactionCounts = await fetchInteractionCounts(supabase, partnerRecords.map((record) => record.id));
+  const errorMessage = getFriendlySupabaseError(partnerError || todayError);
+  const recordsErrorMessage = getFriendlySupabaseError(recordsError);
   const partnerTodayCount = todayRecords?.length || 0;
   const partnerTodayDuration = (todayRecords || []).reduce((total, record) => total + (record.duration_minutes || 0), 0);
 
@@ -88,21 +102,24 @@ export default async function PartnerPage() {
       <section className="partner-records-heading">
         <div>
           <p className="eyebrow">监督记录</p>
-          <h2>最近 {records?.length || 0} 条运动</h2>
+          <h2>最近 {partnerRecords.length} 条运动</h2>
         </div>
         <UsersRound size={22} aria-hidden="true" />
       </section>
 
-      {!records?.length ? (
-        <EmptyState title={errorMessage ? "对方记录暂时无法加载" : "对方还没有记录"} description={errorMessage ? "请稍后重试，或检查网络连接。" : "对方提交打卡后，你会在这里看到完整记录。"} />
+      {!partnerRecords.length ? (
+        <EmptyState
+          title={recordsErrorMessage ? "对方记录暂时无法加载" : "对方还没有运动记录"}
+          description={recordsErrorMessage ? "请稍后重试，或检查网络连接。" : "对方提交打卡后，你会在这里看到完整记录。"}
+        />
       ) : (
         <section className="record-list">
-          {(records as CheckinSummary[]).map((record) => (
+          {partnerRecords.map((record) => (
             <RecordSummaryCard detailHref={`/records/${record.id}`} owner={partnerProfile} record={{ ...record, ...interactionCounts[record.id] }} key={record.id} />
           ))}
         </section>
       )}
-      {records && records.length >= RECORD_LIST_LIMIT ? <p className="form-note">默认显示最近 {RECORD_LIST_LIMIT} 条对方记录。</p> : null}
+      {partnerRecords.length >= RECORD_LIST_LIMIT ? <p className="form-note">默认显示最近 {RECORD_LIST_LIMIT} 条对方记录。</p> : null}
     </UserShell>
   );
 }

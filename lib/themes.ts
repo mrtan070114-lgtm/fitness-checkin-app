@@ -119,36 +119,3 @@ export function getThemeCssVariableRecord(themeColor: string | null | undefined)
     "--color-accent-border": theme.accentBorder
   };
 }
-
-export function getThemeBootstrapScript() {
-  const themeVariableMap = Object.fromEntries(
-    Object.keys(themes).map((themeColor) => [
-      themeColor,
-      getThemeCssVariableRecord(themeColor)
-    ])
-  );
-  const statusBarColorMap = Object.fromEntries(
-    Object.values(themes).map((theme) => [theme.value, theme.primary])
-  );
-
-  return `
-    (function () {
-      try {
-        var cookieMatch = document.cookie.match(new RegExp("(?:^|; )" + ${JSON.stringify(themeCookieName)} + "=([^;]*)"));
-        var cookieThemeColor = cookieMatch ? decodeURIComponent(cookieMatch[1]) : null;
-        var themeColor = cookieThemeColor || window.localStorage.getItem(${JSON.stringify(themeStorageKey)});
-        var themeVariables = ${JSON.stringify(themeVariableMap)};
-        var statusBarColors = ${JSON.stringify(statusBarColorMap)};
-        var variables = themeVariables[themeColor];
-
-        if (!variables) return;
-
-        Object.keys(variables).forEach(function (name) {
-          document.documentElement.style.setProperty(name, variables[name]);
-        });
-        document.documentElement.style.setProperty("--app-status-bar-color", statusBarColors[themeColor]);
-      } catch (error) {
-      }
-    })();
-  `;
-}

@@ -55,9 +55,6 @@ describe("theme color source requirements", () => {
     expect(read("components/ThemeMetaUpdater.tsx")).toContain("document.documentElement.style.setProperty");
     expect(read("components/ThemeMetaUpdater.tsx")).toContain("window.localStorage.setItem(themeStorageKey");
     expect(read("components/ThemeMetaUpdater.tsx")).toContain("document.cookie");
-    expect(read("app/layout.tsx")).toContain("getThemeBootstrapScript");
-    expect(read("app/layout.tsx")).toContain("dangerouslySetInnerHTML");
-    expect(read("app/layout.tsx")).toContain("style={getThemeCssVariables(themeColor)}");
     expect(read("app/profile/theme/actions.ts")).toContain("themeCookieName");
 
     const css = read("app/globals.css");
@@ -65,6 +62,19 @@ describe("theme color source requirements", () => {
     expect(css).toContain("var(--color-button-bg)");
     expect(css).toContain("var(--color-nav-active-bg)");
     expect(css).toContain("var(--color-accent-border)");
+  });
+
+  it("does not mutate html theme attributes before hydration", () => {
+    const layout = read("app/layout.tsx");
+    const themes = read("lib/themes.ts");
+
+    expect(layout).not.toContain("getThemeBootstrapScript");
+    expect(layout).not.toContain("dangerouslySetInnerHTML");
+    expect(layout).not.toContain("cookies()");
+    expect(layout).not.toContain("themeCookieName");
+    expect(layout).not.toContain("style={getThemeCssVariables");
+    expect(themes).not.toContain("getThemeBootstrapScript");
+    expect(themes).not.toContain("window.localStorage.getItem");
   });
 
   it("keeps loading states themed instead of hard-coding pink styles", () => {

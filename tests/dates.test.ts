@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateStreak, getDateInTimeZone, getMonthRange } from "@/lib/dates";
+import { calculateStreak, formatDateTimeCN, formatWeekdayCN, getDateInTimeZone, getMonthRange } from "@/lib/dates";
 
 describe("date helpers", () => {
   it("formats the business date in the configured time zone", () => {
@@ -23,5 +23,13 @@ describe("date helpers", () => {
       start: "2026-07-01",
       end: "2026-07-31"
     });
+  });
+
+  it("formats timestamps without relying on runtime locale defaults", () => {
+    expect(formatDateTimeCN("2026-07-07T16:30:05.000Z")).toBe("2026年7月8日 00:30");
+  });
+
+  it("formats weekdays from yyyy-mm-dd dates deterministically", () => {
+    expect(formatWeekdayCN("2026-07-08")).toBe("周三");
   });
 });

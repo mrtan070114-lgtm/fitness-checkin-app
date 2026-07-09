@@ -6,6 +6,26 @@ const DATE_PARTS = new Intl.DateTimeFormat("en-CA", {
   day: "2-digit"
 });
 
+const DATE_TIME_PARTS = new Intl.DateTimeFormat("en-CA", {
+  timeZone: APP_TIME_ZONE,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false
+});
+
+function getRequiredPart(parts: Intl.DateTimeFormatPart[], type: Intl.DateTimeFormatPartTypes) {
+  const value = parts.find((part) => part.type === type)?.value;
+
+  if (!value) {
+    throw new Error("无法格式化日期");
+  }
+
+  return value;
+}
+
 export function getDateInTimeZone(date = new Date(), timeZone = APP_TIME_ZONE) {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone,
@@ -14,13 +34,9 @@ export function getDateInTimeZone(date = new Date(), timeZone = APP_TIME_ZONE) {
     day: "2-digit"
   }).formatToParts(date);
 
-  const year = parts.find((part) => part.type === "year")?.value;
-  const month = parts.find((part) => part.type === "month")?.value;
-  const day = parts.find((part) => part.type === "day")?.value;
-
-  if (!year || !month || !day) {
-    throw new Error("无法格式化日期");
-  }
+  const year = getRequiredPart(parts, "year");
+  const month = getRequiredPart(parts, "month");
+  const day = getRequiredPart(parts, "day");
 
   return `${year}-${month}-${day}`;
 }
@@ -71,4 +87,27 @@ export function calculateStreak(checkinDates: string[], today: string) {
 export function formatDisplayDate(dateString: string) {
   const [year, month, day] = dateString.split("-");
   return `${year}年${Number(month)}月${Number(day)}日`;
+}
+
+export function formatDateCN(dateString: string) {
+  return formatDisplayDate(dateString);
+}
+
+export function formatWeekdayCN(dateString: string) {
+  const [year, month, day] = dateString.split("-").map(Number);
+  const weekday = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+
+  return ["周日", "周一", "周二", "周三", "周四", "周五", "周六"][weekday];
+}
+
+export function formatDateTimeCN(dateString: string) {
+  const date = new Date(dateString);
+  const parts = DATE_TIME_PARTS.formatToParts(date);
+  const year = getRequiredPart(parts, "year");
+  const month = getRequiredPart(parts, "month");
+  const day = getRequiredPart(parts, "day");
+  const hour = getRequiredPart(parts, "hour");
+  const minute = getRequiredPart(parts, "minute");
+
+  return `${year}年${Number(month)}月${Number(day)}日 ${hour}:${minute}`;
 }

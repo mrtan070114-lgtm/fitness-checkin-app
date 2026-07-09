@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth";
 import { BackButton } from "@/components/BackButton";
+import { formatDateTimeCN } from "@/lib/dates";
 import type { Profile } from "@/types/database";
 
 export default async function AdminUsersPage() {
@@ -45,7 +46,7 @@ export default async function AdminUsersPage() {
                   </td>
                   <td className="mono">{user.bind_code}</td>
                   <td>{user.bound_user_id ? userMap.get(user.bound_user_id)?.username || user.bound_user_id : "未绑定"}</td>
-                  <td>{new Date(user.created_at).toLocaleString("zh-CN")}</td>
+                  <td>{formatDateTimeCN(user.created_at)}</td>
                   <td>
                     <Link className="text-link" href={`/admin/users/${user.id}`}>
                       查看记录

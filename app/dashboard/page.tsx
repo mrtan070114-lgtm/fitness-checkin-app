@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { ArrowRight, CalendarDays, Dumbbell, Target, Timer, TrendingUp, UsersRound } from "lucide-react";
 import { requireUser } from "@/lib/auth";
 import { fetchDashboardActivity, type CheckinActivity } from "@/lib/checkins";
-import { addDays, calculateStreak, formatDisplayDate, getMonthRange, getTodayDate, getWeekRange } from "@/lib/dates";
+import { addDays, calculateStreak, formatDateTimeCN, formatDisplayDate, formatWeekdayCN, getMonthRange, getTodayDate, getWeekRange } from "@/lib/dates";
 import { getFriendlySupabaseError } from "@/lib/errors";
 import { formatExerciseDetailsCompact, formatTrainingTypes } from "@/lib/exerciseDetails";
 import { formatGoalNumber, formatWeightGoalStatus, getCompletionPercent } from "@/lib/goals";
@@ -11,12 +11,6 @@ import { fetchProfileById } from "@/lib/profiles";
 import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { UserShell } from "@/components/UserShell";
 import type { Goal, Profile } from "@/types/database";
-
-function formatWeekday(dateString: string) {
-  const [year, month, day] = dateString.split("-").map(Number);
-  const weekday = new Date(year, month - 1, day).getDay();
-  return ["周日", "周一", "周二", "周三", "周四", "周五", "周六"][weekday];
-}
 
 export default async function DashboardPage() {
   const { user, profile, supabase } = await requireUser();
@@ -83,7 +77,7 @@ export default async function DashboardPage() {
       <section className="dashboard-hero">
         <div className="dashboard-hero-top">
           <div>
-            <p className="dashboard-date">{formatDisplayDate(today)} · {formatWeekday(today)}</p>
+            <p className="dashboard-date">{formatDisplayDate(today)} · {formatWeekdayCN(today)}</p>
             <h1>你好，{profile.username}</h1>
             <p>今天也要动一动</p>
           </div>
@@ -240,7 +234,7 @@ export default async function DashboardPage() {
             </div>
             <div>
               <dt>提交时间</dt>
-              <dd>{new Date(latestRecord.created_at).toLocaleString("zh-CN")}</dd>
+              <dd>{formatDateTimeCN(latestRecord.created_at)}</dd>
             </div>
           </dl>
         ) : (
