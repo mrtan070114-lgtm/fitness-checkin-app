@@ -1,11 +1,25 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import { themes } from "@/lib/themes";
 
 const root = process.cwd();
 
 function read(path: string) {
   return readFileSync(join(root, path), "utf8");
+}
+
+function contrastRatio(foreground: string, background: string) {
+  function luminance(hex: string) {
+    const channels = [1, 3, 5].map((index) => Number.parseInt(hex.slice(index, index + 2), 16) / 255);
+    const [red, green, blue] = channels.map((channel) => (
+      channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
+    ));
+    return red * 0.2126 + green * 0.7152 + blue * 0.0722;
+  }
+
+  const values = [luminance(foreground), luminance(background)].sort((a, b) => b - a);
+  return (values[0] + 0.05) / (values[1] + 0.05);
 }
 
 describe("theme color source requirements", () => {
@@ -46,6 +60,56 @@ describe("theme color source requirements", () => {
     expect(themes).toContain("getThemeByColor");
     expect(read("types/database.ts")).toContain("theme_color");
     expect(read("types/database.ts")).toContain("update_my_theme_color");
+  });
+
+  it("uses a complete tonal palette instead of layering accents over a green canvas", () => {
+    const themes = read("lib/themes.ts");
+    const css = read("app/globals.css");
+
+    for (const field of [
+      "canvas",
+      "canvasTop",
+      "canvasBottom",
+      "surface",
+      "surfaceSoft",
+      "text",
+      "muted",
+      "line",
+      "shadowRgb"
+    ]) {
+      expect(themes).toContain(`${field}:`);
+    }
+
+    for (const variable of [
+      "--bg",
+      "--app-bg-top",
+      "--app-bg-bottom",
+      "--surface",
+      "--surface-soft",
+      "--text",
+      "--muted",
+      "--line",
+      "--theme-shadow-rgb"
+    ]) {
+      expect(themes).toContain(`\"${variable}\"`);
+    }
+
+    for (const pinkValue of ["#a9275d", "#f7e8ee", "#fff9fb", "#241b20", "#75676e", "#e8d9df"]) {
+      expect(themes).toContain(pinkValue);
+    }
+
+    expect(css).toContain("var(--app-bg-top)");
+    expect(css).toContain("var(--app-bg-bottom)");
+    expect(css).toContain("rgba(var(--theme-shadow-rgb), 0.08)");
+    expect(css).not.toContain("linear-gradient(180deg, #f7faf5 0%, var(--bg) 48%, #e7f0ea 100%)");
+  });
+
+  it("keeps themed foregrounds readable on mobile surfaces", () => {
+    for (const theme of Object.values(themes)) {
+      expect(contrastRatio(theme.text, theme.canvas)).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio(theme.muted, theme.canvas)).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio("#ffffff", theme.buttonBg)).toBeGreaterThanOrEqual(4.5);
+    }
   });
 
   it("applies theme variables through the user shell and global css", () => {
@@ -110,7 +174,7 @@ describe("theme color source requirements", () => {
     expect(css).toContain("--app-status-bar-color: #f7faf5");
     expect(css).not.toContain("--app-status-bar-color: #126b42");
 
-    for (const primary of ['primary: "#126b42"', 'primary: "#db2777"', 'primary: "#2563eb"', 'primary: "#7c3aed"']) {
+    for (const primary of ['primary: "#126b42"', 'primary: "#a9275d"', 'primary: "#2563eb"', 'primary: "#7c3aed"']) {
       expect(themes).toContain(primary);
     }
     expect(updater).toContain('upsertMeta("theme-color", theme.primary)');

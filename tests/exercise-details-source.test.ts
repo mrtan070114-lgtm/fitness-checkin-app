@@ -55,6 +55,9 @@ describe("exercise details source requirements", () => {
     expect(fields).toContain("该动作已存在");
     expect(fields).toContain("确认添加");
     expect(fields).toContain("取消");
+    expect(fields).toContain('event.key === "Enter"');
+    expect(fields).toContain("event.preventDefault()");
+    expect(fields).toContain("addCustomExercise()");
     expect(helpers).toContain("EXERCISE_TO_TRAINING_TYPE");
     expect(helpers).toContain("deriveTrainingTypes");
     expect(userAction).toContain("parseExerciseDetailsForm");

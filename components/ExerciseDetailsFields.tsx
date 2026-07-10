@@ -146,6 +146,12 @@ export function ExerciseDetailsFields({
               setCustomName(event.target.value);
               setCustomError(null);
             }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                addCustomExercise();
+              }
+            }}
             placeholder="例如 波比跳"
           />
         </label>
