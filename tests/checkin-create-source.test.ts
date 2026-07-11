@@ -32,4 +32,29 @@ describe("checkin create compatibility and rls requirements", () => {
     expect(sql).toContain("user_id = (select auth.uid())");
     expect(sql).toContain("locked = true");
   });
+
+  it("replaces the current goal weight after a weighted checkin and detects a decrease", () => {
+    const action = read("app/checkin/actions.ts");
+
+    expect(action).toContain('from("goals").select("current_weight")');
+    expect(action).toContain('.eq("user_id", user.id)');
+    expect(action).toContain("maybeSingle()");
+    expect(action).toContain('from("goals").upsert(');
+    expect(action).toContain("current_weight: parsed.data.weight");
+    expect(action).toContain('onConflict: "user_id"');
+    expect(action).toContain("getWeightLoss");
+    expect(action).toContain('revalidatePath("/goals")');
+  });
+
+  it("renders the celebration only from a valid post-checkin payload", () => {
+    const action = read("app/checkin/actions.ts");
+    const page = read("app/checkin/page.tsx");
+
+    expect(action).toContain('successParams.set("celebrate", "1")');
+    expect(action).toContain('successParams.set("previousWeight"');
+    expect(action).toContain('successParams.set("currentWeight"');
+    expect(page).toContain("parseWeightCelebration(params)");
+    expect(page).toContain("WeightLossCelebration");
+    expect(page).toContain("{...celebration}");
+  });
 });

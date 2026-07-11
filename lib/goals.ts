@@ -10,6 +10,13 @@ export function getWeightGap(goal: Pick<Goal, "current_weight" | "target_weight"
   return Number((goal.current_weight - goal.target_weight).toFixed(1));
 }
 
+export function getWeightLoss(previousWeight: number | null | undefined, currentWeight: number) {
+  if (previousWeight === null || previousWeight === undefined) return null;
+  if (!Number.isFinite(previousWeight) || !Number.isFinite(currentWeight)) return null;
+  if (currentWeight >= previousWeight) return null;
+  return Number((previousWeight - currentWeight).toFixed(1));
+}
+
 export function formatWeightGoalStatus(goal: Pick<Goal, "current_weight" | "target_weight"> | null | undefined) {
   const gap = getWeightGap(goal);
   if (gap === null) return "体重数据不足";

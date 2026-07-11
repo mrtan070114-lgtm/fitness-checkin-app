@@ -9,6 +9,7 @@ import { hasAnyExerciseCount, parseExerciseDetailsForm } from "@/lib/exerciseDet
 import { requireUser } from "@/lib/auth";
 import { isUsableImage, uploadCheckinImage } from "@/lib/uploads";
 import { isMissingOptionalCheckinColumnError } from "@/lib/checkins";
+import { getWeightLoss } from "@/lib/goals";
 import type { CheckinInsert } from "@/types/database";
 
 const nullableText = z.preprocess((value) => {
@@ -90,6 +91,23 @@ export async function createCheckin(formData: FormData) {
     }
   }
 
+  let previousWeight: number | null = null;
+  let previousWeightReadSucceeded = false;
+
+  if (parsed.data.weight !== null) {
+    const { data: currentGoal, error: currentGoalError } = await supabase
+      .from("goals").select("current_weight")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (currentGoalError) {
+      console.error("read current goal weight failed", currentGoalError);
+    } else {
+      previousWeight = currentGoal?.current_weight ?? null;
+      previousWeightReadSucceeded = true;
+    }
+  }
+
   const checkinInsertValues: CheckinInsert = {
     user_id: user.id,
     checkin_date: today,
@@ -133,8 +151,36 @@ export async function createCheckin(formData: FormData) {
     fail(error.message);
   }
 
+  let weightLoss: number | null = null;
+
+  if (parsed.data.weight !== null) {
+    const { error: goalWeightError } = await supabase.from("goals").upsert(
+      {
+        user_id: user.id,
+        current_weight: parsed.data.weight
+      },
+      { onConflict: "user_id" }
+    );
+
+    if (goalWeightError) {
+      console.error("sync current goal weight failed", goalWeightError);
+    } else if (previousWeightReadSucceeded) {
+      weightLoss = getWeightLoss(previousWeight, parsed.data.weight);
+    }
+
+    revalidatePath("/goals");
+  }
+
   revalidatePath("/dashboard");
   revalidatePath("/records");
   revalidatePath("/checkin");
-  redirect("/checkin?created=1");
+
+  const successParams = new URLSearchParams({ created: "1" });
+  if (weightLoss !== null && previousWeight !== null && parsed.data.weight !== null) {
+    successParams.set("celebrate", "1");
+    successParams.set("previousWeight", String(previousWeight));
+    successParams.set("currentWeight", String(parsed.data.weight));
+  }
+
+  redirect(`/checkin?${successParams.toString()}`);
 }

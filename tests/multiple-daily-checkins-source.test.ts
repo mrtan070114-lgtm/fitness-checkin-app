@@ -23,7 +23,7 @@ describe("multiple daily checkins source rules", () => {
 
     expect(action).toContain("session_title");
     expect(action).not.toContain("今天已经打卡，不能重复提交");
-    expect(action).not.toContain("maybeSingle()");
+    expect(action).not.toMatch(/from\("checkins"\)\.select\([\s\S]*?maybeSingle\(\)/);
   });
 
   it("updates user-facing forms and record lists for multiple entries", () => {

@@ -5,6 +5,8 @@ import { requireUser } from "@/lib/auth";
 import { getTodayDate, formatDisplayDate } from "@/lib/dates";
 import { CheckinForm } from "@/components/CheckinForm";
 import { UserShell } from "@/components/UserShell";
+import { WeightLossCelebration } from "@/components/WeightLossCelebration";
+import { parseWeightCelebration } from "@/lib/celebration";
 
 type CheckinPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -19,6 +21,7 @@ export default async function CheckinPage({ searchParams }: CheckinPageProps) {
   }
 
   const today = getTodayDate();
+  const celebration = parseWeightCelebration(params);
 
   return (
     <UserShell profile={profile} title="添加运动记录" subtitle="记录这一次训练">
@@ -41,6 +44,8 @@ export default async function CheckinPage({ searchParams }: CheckinPageProps) {
           </div>
         </section>
       ) : null}
+
+      {celebration ? <WeightLossCelebration {...celebration} /> : null}
 
       <CheckinForm />
     </UserShell>
